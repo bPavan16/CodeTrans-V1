@@ -8,6 +8,8 @@
 \usepackage{listings}
 \usepackage{tabularx}
 \usepackage{longtable} % For long tables (if needed)
+\usepackage{adjustbox}
+
 
 
 \author[1]{Anirudh Dambal}
@@ -88,113 +90,104 @@ The data preparation process included the following steps:
 
 \subsubsection{Dataset Statistics}
 
-The final dataset contains 667 rows, each representing a pseudocode instruction alongside its semantically equivalent Java and Python implementations. This structured dataset serves as the foundation for training and evaluating the T5-based code translation model.
+The final dataset contains 667 rows, each representing a pseudocode instruction alongside its semantically equivalent Java and Python implementations. This structured dataset serves as the foundation for training and evaluating the T5-based code translation model. As noted earlier, pseudocode column was not used in training, rather used only for prompts to Gemini API, which generated the corresponding Java and Python program snippets.
 
 \begin{table}[h!]
 \centering
+\adjustbox{max width=\textwidth}{ % Scale table to fit within page width
+\small % Reduce font size for the whole table
 \begin{tabular}{|c|c|c|}
-
+\hline
+\textbf{Pseudocode} & \textbf{Java Snippet} & \textbf{Python Snippet} \\
 \hline
 \begin{minipage}[t]{0.3\textwidth}
-Pseudocode
-\end{minipage}
-&
-\begin{minipage}[t]{0.3\textwidth}
-Java Snippet
-\end{minipage}
-&
-\begin{minipage}[t]{0.3\textwidth}
-Python Snippet
-\end{minipage}
-\\
-
-
-
-\hline
-\begin{minipage}[t]{0.3\textwidth}
-\begin{lstlisting}[language=C, basicstyle=\ttfamily, breaklines=true]
-int main() {
-    std::cout << "Hello, world!";
-    return 0;
-}
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize, breaklines=true]
+Maximum Prefix Sum possible by merging two given arrays;
+Java Program to implement the above approach;
+Stores the maximum prefix sum of the array A[];
+Traverse the array A[]
+Stores the maximum prefix sum of the array B[];
+Traverse the array B[];
 \end{lstlisting}
 \end{minipage}
 &
 \begin{minipage}[t]{0.3\textwidth}
-\begin{lstlisting}[language=C, basicstyle=\ttfamily, breaklines=true]
-int add(int a, int b) {
-    return a + b;
-}
+\begin{lstlisting}[language=Java, basicstyle=\ttfamily\scriptsize, breaklines=true]
+public static int maxPrefixSum(int[] A, int[] B) {
+    int maxPrefixSumA = 0, maxPrefixSumB = 0;
+    for (int i = 0; i < A.length; i++) {
+      maxPrefixSumA = Math.max(maxPrefixSumA, maxPrefixSumA + A[i]);
+    }
+    for (int i = 0; i < B.length; i++) {
+      maxPrefixSumB = Math.max(maxPrefixSumB, maxPrefixSumB + B[i]);
+    }
+    return Math.max(maxPrefixSumA, maxPrefixSumB);
+  }
 \end{lstlisting}
 \end{minipage}
 &
 \begin{minipage}[t]{0.3\textwidth}
-\begin{lstlisting}[language=C, basicstyle=\ttfamily, breaklines=true]
-void printHello() {
-    std::cout << "Hello!";
-}
-\end{lstlisting}
-\end{minipage}
-\\
-\hline
-\begin{minipage}[t]{0.3\textwidth}
-\begin{lstlisting}[language=C, basicstyle=\ttfamily, breaklines=true]
-int multiply(int x, int y) {
-    return x * y;
-}
-\end{lstlisting}
-\end{minipage}
-&
-\begin{minipage}[t]{0.3\textwidth}
-\begin{lstlisting}[language=C, basicstyle=\ttfamily, breaklines=true]
-for (int i = 0; i < 10; i++) {
-    std::cout << i << std::endl;
-}
-\end{lstlisting}
-\end{minipage}
-&
-\begin{minipage}[t]{0.3\textwidth}
-\begin{lstlisting}[language=C, basicstyle=\ttfamily, breaklines=true]
-if (a > b) {
-    return a;
-} else {
-    return b;
-}
+\begin{lstlisting}[language=Python, basicstyle=\ttfamily\scriptsize, breaklines=true]
+def max_prefix_sum(A, B):
+  max_prefix_sum_A = 0
+  for i in range(len(A)):
+    max_prefix_sum_A = max(max_prefix_sum_A, max_prefix_sum_A + A[i])
+  max_prefix_sum_B = 0
+  for i in range(len(B)):
+    max_prefix_sum_B = max(max_prefix_sum_B, max_prefix_sum_B + B[i])
+  return max(max_prefix_sum_A, max_prefix_sum_B)
 \end{lstlisting}
 \end{minipage}
 \\
 \hline
+% Additional rows can be added here
 \begin{minipage}[t]{0.3\textwidth}
-\begin{lstlisting}[language=C, basicstyle=\ttfamily, breaklines=true]
-void swap(int &a, int &b) {
-    int temp = a;
-    a = b;
-    b = temp;
-}
+\begin{lstlisting}[basicstyle=\ttfamily\scriptsize, breaklines=true]
+Ways to remove one element from a binary string so that XOR becomes zero |
+Java program to count number of ways to remove an element so that XOR of remaining string becomes 0. ;
+Returns number of ways in which XOR become ZERO by remove 1 element ;
+Counting number of 0 and 1 ;
+If count of ones is even then return count of zero else count of one ;
 \end{lstlisting}
 \end{minipage}
 &
 \begin{minipage}[t]{0.3\textwidth}
-\begin{lstlisting}[language=C, basicstyle=\ttfamily, breaklines=true]
-int factorial(int n) {
-    if (n == 0) return 1;
-    return n * factorial(n - 1);
-}
+\begin{lstlisting}[language=Java, basicstyle=\ttfamily\scriptsize, breaklines=true]
+public static int countWays(String str) {
+    int count0 = 0;
+    int count1 = 0;
+    for (int i = 0; i < str.length(); i++) {
+      if (str.charAt(i) == '0') {
+        count0++;
+      } else {
+        count1++;
+      }
+    }
+    if (count1 % 2 == 0) {
+      return count0;
+    } else {
+      return count1;
+    }
+  }
 \end{lstlisting}
 \end{minipage}
 &
 \begin{minipage}[t]{0.3\textwidth}
-\begin{lstlisting}[language=C, basicstyle=\ttfamily, breaklines=true]
-int fibonacci(int n) {
-    if (n <= 1) return n;
-    return fibonacci(n - 1) + fibonacci(n - 2);
-}
+\begin{lstlisting}[language=Python, basicstyle=\ttfamily\scriptsize, breaklines=true]
+def count_ways(s):
+  count_zero = s.count('0')
+  count_one = s.count('1')
+  if count_one % 2 == 0:
+    return count_zero
+  else:
+    return count_one
 \end{lstlisting}
 \end{minipage}
 \\
 \hline
 \end{tabular}
-\caption{Sample code in a table with multiple lines, properly formatted}
+}
+\caption{Sample code snippets in a table}
 \end{table}
 
 \subsubsection{Key Advantages}
