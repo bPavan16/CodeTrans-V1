@@ -37,60 +37,152 @@ Using T5-Small}
 \end{keywords}
 \section{Introduction}
 
-Modern software development increasingly relies on specialized programming languages tailored to specific domains. These Domain-Specific Languages (DSLs) improve code clarity, usability, and performance by providing optimizations and abstractions suited to their target applications. Examples include Spark for distributed computing, NumPy for array processing, TACO for tensor processing, and P4 for network packet processing. While these DSLs offer significant benefits, integrating them into existing workflows often requires rewriting legacy code—a tedious and error-prone process that risks introducing bugs and altering the original code’s behavior. This challenge of translating code between high-level languages is commonly referred to as transpilation.
+Code-to-code translation addresses real-world challenges such as adapting legacy systems to new technologies, improving code maintainability, and increasing cross-language collaboration. For example, businesses transitioning from Java to Python may aim to leverage Python’s rich data science libraries without discarding years of development in Java. This requires reliable methods to convert existing codebases accurately while preserving their original logic and functionality.
 
-Recent advancements in Large Language Models (LLMs), such as BERT (Devlin et al., 2019) and GPT-3 (Brown et al., 2020), have shown promise in automating complex programming tasks, including code generation, repair, and testing. However, generating reliable and formally correct code remains a significant hurdle. Most existing research focuses on code generation without guarantees of correctness (e.g., Li et al., 2022, 2023; Rozière et al., 2024), or on generating annotations and invariants for existing code (Pei et al., 2023; Chakraborty et al., 2023). Additionally, formal verification tools rely on specialized languages like SMT-LIB and Dafny, which are often underrepresented in LLM training datasets, further complicating the application of these models in verification contexts.
+Domain-Specific Languages (DSLs) like Spark, NumPy, TACO, and P4 have changed the face of modern software development process by providing optimizations and abstractions tailored to specific applications. They improve code clarity, usability, and performance. However, they often require rewriting legacy code-a very tedious and error-prone process that risks changing the original behavior. Transpilation, or translating code between high-level languages, remains a significant challenge.
 
-The success of pre-trained models in natural language processing, such as BERT, GPT, and T5 (Raffel et al., 2020), has inspired researchers to adapt similar methods for programming languages. Efforts in this direction (e.g., Svyatkovskiy et al., 2020; Kanade et al., 2020; Feng et al., 2020) have produced encouraging results, particularly for tasks like code translation and synthesis.
+Recent advancements in Large Language Models (LLMs), such as BERT, GPT-3, and T5, have been promising in the automation of programming tasks like code generation and repair. Still, reliable code translation remains a challenge because most models lack robustness and correctness guarantees. In addition, formal verification tools depend on niche languages like SMT-LIB and Dafny, which are underrepresented in LLM training datasets, thus limiting their practical application.
 
-Building on these advancements, this paper explores the use of the T5 transformer model for transpiling code between two syntactically distinct languages: Java and Python. We curate a dataset of paired Java and Python programs and train the T5 model to translate Java code into its Python equivalent, demonstrating its potential for reliable transpilation in real-world scenarios.
+The core challenge lies in translating code between high-level languages with distinct syntax and semantics, such as Java and Python. Current transpilation methods demand manual effort and expertise, which reduces efficiency and increases the risk of errors. While LLMs offer potential solutions, existing models often fail to address these limitations in real-world scenarios.
 
-\section{Related work}
+The main goals of this paper are to curate a dataset of paired Java and Python programs for training. The study attempts to determine the efficacy of the T5 model in automating the translation of Java to Python code and addresses the practical challenges encountered by developers, such as syntactic and semantic differences between the two languages.
 
-The application of machine learning models to programming tasks has seen significant advancements in recent years. Early work explored novel ways to represent code for machine learning, leveraging hierarchical structures such as Abstract Syntax Trees (ASTs). Building on these representations, researchers like Tai et al. (2015) introduced Tree-LSTM models, which encode tree structures effectively by processing nodes recursively, starting from the leaves. This foundational work laid the groundwork for subsequent applications in program analysis and transformation. Chen et al. (2018) extended these ideas by proposing a tree-to-tree encoder-decoder framework tailored for code, enabling structured transformations between different tree representations. Drissi et al. (2018) further refined this approach by introducing models that encode program trees with binarization techniques, such as the Left-Child Right-Sibling representation, demonstrating improvements in tasks like program translation. Together, these works highlighted the potential of structured neural models for code understanding and generation. The advent of neural machine translation (NMT) frameworks inspired applications beyond natural language. Tufano et al. (2018) applied NMT to software maintenance tasks, focusing on automated bug fixing. By mining GitHub for bug-fix commits and abstracting code changes into generalizable patterns, they trained models capable of generating bug-fixing patches that closely mimic developer edits. Their approach, which utilized tools like GumTree for edit tracking, achieved high syntactic correctness in generated patches and showcased the utility of NMT for learning transformations at the AST level. In parallel, Lachaux et al. (2020) introduced TransCoder, a system for translating functions between programming languages without requiring parallel training data. By leveraging monolingual source code and unsupervised learning techniques, TransCoder captured complex, language-specific patterns and outperformed rule-based commercial systems. This work also contributed valuable resources, including a dataset of parallel functions with unit tests, to facilitate further research in code translation. Katz et al. (2019) tackled the problem of decompilation, where low-level code is converted back into a high-level programming language. Traditional decompilers relied on expert-designed rule-based methods, which were expensive to adapt to new languages or constructs. Katz and colleagues proposed a neural approach, training NMT models to perform decompilation by reversing compiler processes. Their framework demonstrated high success rates on tasks such as translating LLVM IR and x86 assembly back to source code, proving the viability of machine learning for decompilation. Finally, Armengol-Estapé et al. (2021) explored the use of transformer models for compilation tasks, marking a shift toward leveraging large pre-trained language models in program analysis and transformation. Transformers, known for their success in natural language processing, opened new possibilities for automating complex programming tasks like code generation, translation, and repair. These advancements collectively illustrate the evolution of machine learning techniques for code-related tasks, from tree-based models to neural machine translation and transformers. Each step has contributed to a broader understanding of how programs can be represented, translated, and optimized, laying the foundation for the methods explored in this work.
+The rest of the paper is organized as follows: Section 2 reviews related work, focusing on advancements in machine learning techniques for programming tasks. Section 3 outlines the proposed methodology, including dataset preparation and model training. Section 4 presents experimental results, analyzing the T5 model's performance in code translation. Section 5 discusses key findings and future research directions. Finally, Section 6 concludes with insights into the study's contributions.
 
-\section{Proposed work}
 
-This work presents a transpilation framework for automatic translation between high-level programming languages, namely Java and Python, using a fine-tuned T5-small model on a generated dataset of the two respective code pairs. The framework deploys T5-small's transformer-based encoder-decoder architecture in order to capture syntactic and semantic differences existing between the two above languages. Its implementation focuses both on training and inference, whereby a robust pipeline is achieved for translating Java code into its Python equivalent.
 
-\subsection{Dataset Preparation}
+\section{Related Work}
 
-\subsubsection{Overview}
+The application of machine learning models to programming tasks has seen significant advancements in recent years. Early research focused on representing code for machine learning purposes, leveraging hierarchical structures such as Abstract Syntax Trees (ASTs). Researchers like Tai et al. (2015) introduced Tree-LSTM models, which encode tree structures by processing nodes recursively, starting from the leaves. Mathematically, Tree-LSTMs extend the standard LSTM to handle tree-structured data by defining cell states and hidden states for each node \( i \) based on its child nodes \( C(i) \):
+\[
+h_i, c_i = \text{TreeLSTM}(x_i, \{h_{j}, c_{j} \,|\, j \in C(i)\}).
+\]
+This innovation laid the groundwork for program analysis and transformation. A schematic representation of the Tree-LSTM architecture can be illustrated in Figure~\ref{fig:tree-lstm}.
 
-The dataset developed for the purpose of this research was generated so that it could ensure diversity and semantic richness of paired Java and Python code snippets that are grounded in pseudocode instructions. Through Google's Gemini API, the generation of the dataset automatically translates pseudocode into both Java and Python implementations in the creation of highly quality source-aligned programming examples. The resulting dataset consists of three components: pseudocode, Java code, and Python code. The pseudocode column was not directly utilized during the training process. Instead, only the Java and Python code pairs were employed for model training, as the focus was on translating between these two programming languages
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Images/1.png}} % Replace with actual Tree-LSTM flowchart
+    \caption{Tree-LSTM Architecture for AST Processing}
+    \label{fig:tree-lstm}
+\end{figure}
 
-\subsubsection{Data Sources}
+Chen et al. (2018) extended this approach by proposing a tree-to-tree encoder-decoder framework tailored specifically for code. This framework enabled structured transformations between different tree representations, such as converting an AST of one language into another. The encoder mapped the source tree \( T_s \) into a latent representation \( z \), and the decoder reconstructed the target tree \( T_t \). Formally:
+\[
+z = f_{\text{encoder}}(T_s), \quad T_t = f_{\text{decoder}}(z).
+\]
+Drissi et al. (2018) refined these ideas further by introducing the Left-Child Right-Sibling (LCRS) representation, simplifying tree encoding by reducing tree structures into binary trees, which proved effective for program translation tasks.
 
-The pseudocode instructions were sourced from two collections:
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Images/2.png}} % Replace with actual flowchart for tree-to-tree model
+    \caption{Tree-to-Tree Encoder-Decoder Framework for Code Transformation}
+    \label{fig:tree-encoder-decoder}
+\end{figure}
+
+The advent of neural machine translation (NMT) frameworks inspired new applications beyond natural language. Tufano et al. (2018) explored automated bug fixing by applying NMT to software maintenance tasks. They mined GitHub for bug-fix commits and abstracted code changes into generalizable patterns. Using tools like GumTree for edit tracking, they trained models capable of generating patches resembling developer edits. The loss function used to train the model, minimizing syntactic and semantic differences between generated and ground truth patches, is expressed as:
+\[
+\mathcal{L} = \sum_{i=1}^N \text{CrossEntropy}(\hat{y}_i, y_i),
+\]
+where \( \hat{y}_i \) is the predicted token and \( y_i \) is the actual token. Their approach achieved high syntactic correctness and underscored the utility of NMT in learning transformations at the AST level.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Images/3.png}} % Replace with NMT bug fixing diagram
+    \caption{Neural Machine Translation for Automated Bug Fixing}
+    \label{fig:nmt-bug-fixing}
+\end{figure}
+
+Lachaux et al. (2020) introduced TransCoder, a system for translating functions between programming languages without requiring parallel training data. By leveraging monolingual source code and unsupervised learning techniques, TransCoder captured language-specific patterns. The objective was to minimize a combined reconstruction and translation loss:
+\[
+\mathcal{L} = \mathcal{L}_{\text{reconstruction}} + \mathcal{L}_{\text{translation}},
+\]
+where \( \mathcal{L}_{\text{reconstruction}} \) ensures that monolingual data reconstructs correctly, and \( \mathcal{L}_{\text{translation}} \) aligns the latent spaces of source and target languages. TransCoder outperformed rule-based systems, showcasing robust language-agnostic representations.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Images/4.jpg}
+    \caption{TransCoder Framework for Unsupervised Code Translation}
+    \label{fig:transcoder}
+\end{figure}
+
+Katz et al. (2019) addressed decompilation, converting low-level code to high-level programming languages. Traditional decompilers relied on expert-crafted rules, but Katz et al. proposed a neural model to reverse compiler processes. Their NMT-based framework achieved high success rates in translating LLVM IR and x86 assembly back to source code, with substantial improvements over rule-based systems. 
+
+More recently, Armengol-Estapé et al. (2021) explored transformer models for compilation tasks, marking a shift towards leveraging large pre-trained models. Transformers, with their self-attention mechanisms, allowed efficient modeling of long-range dependencies in code. The attention mechanism is expressed as:
+\[
+\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^\top}{\sqrt{d_k}}\right)V,
+\]
+where \( Q \), \( K \), and \( V \) are query, key, and value matrices, and \( d_k \) is the dimensionality of the keys. These models opened new possibilities for tasks like code generation, translation, and repair.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Images/5.png}} % Replace with transformer-based model diagram
+    \caption{Transformer Model for Compilation Tasks}
+    \label{fig:transformer-code}
+\end{figure}
+
+These advancements collectively illustrate the evolution of machine learning techniques for programming tasks. From tree-based models to NMT and transformers, each step has contributed to a deeper understanding of how programs can be represented, translated, and optimized, forming the foundation for the methods explored in this work.
+
+
+\section{Proposed Work}
+
+This work presents a transpilation framework for automatic translation between high-level programming languages, namely Java and Python, using a fine-tuned T5-small model. The framework employs the encoder-decoder architecture of T5-small to capture syntactic and semantic differences between these languages. The implementation focuses on training and inference, achieving a robust pipeline for translating Java code into Python.
+
+\subsection{Dataset preparation}
+    The dataset was generated with the help of the Gemini model, where sample text was initially translated into pseudocode, then coded into both Java and Python without language-specific shortcuts.
 \begin{enumerate}
-  \item \texttt{codeparrot/xlcost-text-to-code/Java-program-level} (subset with 11K rows) [huggingface.co]: A collection of pseudocode entries specifically curated to be well-suited for Java-style implementations.
-  \item \texttt{codeparrot/xlcost-text-to-code/Python-program-level} (subset with 10.6K rows) [huggingface.co]: A similar collection designed for Python-oriented tasks.
+    Dataset preparation involves generating pseudocode-based paired code snippets. 
+    \begin{figure}[h!]
+\centering
+\includegraphics[width=0.7\textwidth]{dataset_methodology.png} % Replace with actual flowchart file
+\caption{Dataset Preparation Methodology}
+\end{figure}
+\end{enumerate}
+\subsubsection{Algorithms and Processes}
+
+\subsubsubsection{Dataset Preparation Process}
+\begin{enumerate}
+    \item \textbf{API Integration:} Using Gemini API to generate Java and Python implementations from pseudocode instructions.
+    \item \textbf{Balancing Data:} Ensuring equal representation of Java and Python code pairs.
+    \item \textbf{Rate Limiting:} Adding a delay of 4 seconds between requests to comply with API usage limits.
 \end{enumerate}
 
-Each entry in these collections is represented as a dictionary containing:
+
+
+\subsubsection{Key Concepts, Theories, and Equations}
+
+\subsubsubsection{Key Concepts}
+\subsubsubsection{Equation} 
+
+
+
+\subsubsection{Implementation Approach}
+
+\paragraph{Data Preparation} The dataset consists of 667 paired Java and Python code snippets generated from pseudocode. Each entry includes:
 \begin{itemize}
-  \item \texttt{text}: The pseudocode instruction.
-  \item \texttt{code}: Corresponding code snippets derived from existing resources.
+    \item Pseudocode instruction.
+    \item Corresponding Java and Python code snippets.
 \end{itemize}
 
-\subsubsection{Data Generation Pipeline}
-The data preparation process included the following steps:
-\begin{enumerate}
-  \item \textbf{Configuration and API Integration:} The Google Gemini API (model version \texttt{gemini-1.5-flash}) was configured with an API key to serve as the generative backend for converting pseudocode to programming language implementations. Requests to the API were structured as detailed prompts, instructing the model to generate code directly fulfilling the pseudocode requirements.
-  \item \textbf{Dataset Initialization:} A pandas DataFrame was initialized with three columns: \texttt{Pseudo Code}, \texttt{Java}, and \texttt{Python}. This served as the core structure for storing and updating the dataset as new code samples were generated.
-  \item \textbf{Code Generation Process:} For each pseudocode entry:
-    \begin{itemize}
-        \item A prompt was sent to the Gemini API to generate a Python implementation, explicitly requesting a functional code block without comments or extraneous text.
-        \item A second prompt generated the corresponding Java implementation under the same constraints.
-        \item The responses were post-processed to ensure clean and consistent formatting.
-    \end{itemize}
-  \item \textbf{API Rate Limiting:} To avoid overwhelming the API and ensure adherence to rate-limiting constraints, a delay of 4 seconds was enforced between consecutive requests.
-  \item \textbf{Balancing Java and Python Sources:} The process was repeated for both the Java-oriented and Python-oriented pseudocode collections, with 667 examples processed from each collection to ensure balance and diversity across languages.
-\end{enumerate}
+\paragraph{Challenges and Solutions}
+\begin{itemize}
+    \item \textbf{Challenge:} Imbalanced pseudocode instructions and inbuilt attribute or properties of a code, syntax, and semantics difference between Java and Python.
+    \item \textbf{Solution:} Curated a balanced dataset with an equal number of Java and Python snippets.
+    \item \textbf{Challenge:} Handling API rate limits.
+    \item \textbf{Solution:} Introduced a delay mechanism between API calls.
+\end{itemize}
 
-\subsubsection{Dataset Statistics}
+\subsubsection{Pseudo-code}
 
-The final dataset contains 667 rows, each representing a pseudocode instruction alongside its semantically equivalent Java and Python implementations. This structured dataset serves as the foundation for training and evaluating the T5-based code translation model. As noted earlier, pseudocode column was not used in training, rather used only for prompts to Gemini API, which generated the corresponding Java and Python program snippets.
+\noindent Example of the data generation process in pseudo-code:
+\begin{lstlisting}[language=Python, caption={Pseudocode for Dataset Preparation}]
+# Generate paired Java and Python snippets
+for instruction in pseudocode_list:
+    java_snippet = generate_code(instruction, "Java")
+    python_snippet = generate_code(instruction, "Python")
+    dataset.append((java_snippet, python_snippet))
+\end{lstlisting}
+
+\subsubsection{Dataset Statistics} The final dataset contains 667 rows, each representing a pseudocode instruction alongside its semantically equivalent Java and Python implementations. This structured dataset serves as the foundation for training and evaluating the T5-based code translation model. As noted earlier, the pseudocode column was not used in training, but only for prompts to Gemini API, which generated the corresponding Java and Python program snippets.
 
 \begin{table}[h!]
 \centering
@@ -190,15 +282,13 @@ def count_ways(s):
 \caption{Sample code snippets in a table}
 \end{table}
 
-\subsubsection{Key Advantages}
-
+\paragraph{Key Advantages}
 \begin{enumerate}
-  \item \textbf{Quality and Consistency:} The use of Gemini API ensures high-quality translations, reducing noise often found in manually paired datasets.
-  \item \textbf{Diversity:} The dataset captures variations in pseudocode expression and their implementations in two syntactically distinct languages, ensuring robust model training.
-  \item \textbf{Scalability:} The automated pipeline allows for easy scaling to include additional examples or other languages in future iterations.
+    \item \textbf{Quality:} High-quality translations due to the Gemini API.
+    \item \textbf{Scalability:} The framework can be extended to other languages.
+    \item \textbf{Diversity:} Supports semantic and syntactic variability.
 \end{enumerate}
 
-This dataset is critical in providing the T5 model with sufficient paired training samples to learn effective code translation between Java and Python.
 
 % Above this corrections needed.
 %
