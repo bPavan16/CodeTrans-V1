@@ -9,8 +9,12 @@
 \usepackage{tabularx}
 \usepackage{longtable} % For long tables (if needed)
 \usepackage{adjustbox}
+\usepackage{amsmath}
 \usepackage{algorithm}
-\usepackage{algorithmic}
+\usepackage{algpseudocode}
+
+
+
 
 \author[1]{Anirudh Dambal}
 \author[1]{Harish Patil}
@@ -139,7 +143,97 @@ This work presents a transpilation framework for automatic translation between h
 \end{enumerate}
 \subsubsection{Algorithms and Processes}
 
-\subsubsubsection{Dataset Preparation Process}
+\begin{algorithm}
+\caption{Automated Generation of Code Implementations from Pseudocode}
+\label{alg:code_generation}
+\begin{algorithmic}[1]
+\Require 
+\begin{itemize}
+    \item A dataset of pseudocode samples with corresponding Java and/or Python code (if available).
+    \item A generative AI model pre-trained on natural language and code (e.g., Gemini-1.5).
+\end{itemize}
+\Ensure 
+\begin{itemize}
+    \item A comprehensive dataset containing pseudocode and its generated Java and Python implementations.
+    \item Evaluation-ready outputs for benchmarking generative model performance.
+\end{itemize}
+
+\State \textbf{Step 1: Data Preparation}
+\State Initialize a structured dataset (\texttt{Dataset}) to store pseudocode and corresponding code implementations.
+\State Save the dataset to a file format suitable for downstream evaluation (e.g., \texttt{PreparedDataset.csv}).
+
+\State \textbf{Step 2: Model Configuration}
+\State Configure a pre-trained generative AI model for code generation, specifying the appropriate API key or model parameters.
+
+\State \textbf{Step 3: Pseudocode-to-Code Translation}
+\For{each pseudocode sample in the dataset}
+    \State \textbf{Input:} Provide the pseudocode as input to the generative model.
+    \State \textbf{Prompt Engineering:} Design prompts to elicit:
+    \begin{itemize}
+        \item \textbf{Python Code Generation:} Generate Python code corresponding to the pseudocode.
+        \item \textbf{Java Code Generation:} Generate Java code corresponding to the pseudocode.
+    \end{itemize}
+    \State \textbf{Output:} Store the generated Java and Python code in the dataset.
+\EndFor
+
+\State \textbf{Step 4: Dataset Augmentation}
+\State Expand the dataset by integrating additional samples, if available, from a secondary pseudocode dataset.
+
+\State \textbf{Step 5: Model Evaluation (Optional)}
+\State Evaluate the generative AI model's output using code correctness and functional equivalence metrics, comparing with ground truth implementations if available.
+
+\State \textbf{Step 6: Dataset Finalization}
+\State Save the augmented dataset, including all pseudocode and generated implementations, to facilitate reproducibility and further research.
+
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{Training and Evaluation of a Code Translation Model}
+\label{alg:code_translation}
+\begin{algorithmic}[1]
+\Require 
+\begin{itemize}
+    \item A pre-trained T5 transformer model.
+    \item A parallel dataset of Java and Python code samples.
+\end{itemize}
+\Ensure A fine-tuned model capable of translating Java code to Python.
+
+\State \textbf{Step 1: Model Initialization}
+\State Load a pre-trained T5 transformer as the base translation model.
+\State Configure the model for the specified hardware (e.g., GPU or CPU).
+
+\State \textbf{Step 2: Data Preparation}
+\State Retrieve a parallel dataset containing Java code and corresponding Python translations.
+\State Split the dataset into training and validation subsets (e.g., 75\% for training, 25\% for validation).
+
+\State \textbf{Step 3: Model Fine-Tuning}
+\State Fine-tune the T5 transformer using the training dataset:
+\begin{itemize}
+    \item Define the loss function to minimize translation error.
+    \item Optimize hyperparameters such as batch size, learning rate, and number of epochs.
+\end{itemize}
+
+\State \textbf{Step 4: Evaluation}
+\State Evaluate the fine-tuned model on the validation dataset:
+\begin{itemize}
+    \item Measure translation accuracy using metrics such as BLEU or exact match accuracy.
+    \item Analyze error patterns to identify potential areas for improvement.
+\end{itemize}
+
+\State \textbf{Step 5: Inference}
+\State Provide the fine-tuned model with unseen Java code samples.
+\State Generate Python translations for the input samples.
+\State Analyze the outputs qualitatively and quantitatively.
+
+\State \textbf{Step 6: Model Deployment}
+\State Save the fine-tuned model and tokenizer to a persistent storage system for future inference and experimentation.
+
+\end{algorithmic}
+\end{algorithm}
+
+
+\subsubsection{Dataset Preparation Process}
 \begin{enumerate}
     \item \textbf{API Integration:} Using Gemini API to generate Java and Python implementations from pseudocode instructions.
     \item \textbf{Balancing Data:} Ensuring equal representation of Java and Python code pairs.
@@ -150,8 +244,8 @@ This work presents a transpilation framework for automatic translation between h
 
 \subsubsection{Key Concepts, Theories, and Equations}
 
-\subsubsubsection{Key Concepts}
-\subsubsubsection{Equation} 
+\subsubsection{Key Concepts}
+\subsubsection{Equation} 
 
 
 
@@ -197,50 +291,7 @@ The data preparation process included the following steps:
   \item \textbf{Balancing Java and Python Sources:} The process was repeated for both the Java-oriented and Python-oriented pseudocode collections, with 667 examples processed from each collection to ensure balance and diversity across languages.
 \end{enumerate}
 
-\begin{algorithm}
-\caption{Automated Generation of Code Implementations from Pseudocode}
-\label{alg:code_generation}
-\begin{algorithmic}[1]
-\Require 
-\begin{itemize}
-    \item A dataset of pseudocode samples with corresponding Java and/or Python code (if available).
-    \item A generative AI model pre-trained on natural language and code (e.g., Gemini-1.5).
-\end{itemize}
-\Ensure 
-\begin{itemize}
-    \item A comprehensive dataset containing pseudocode and its generated Java and Python implementations.
-    \item Evaluation-ready outputs for benchmarking generative model performance.
-\end{itemize}
 
-\State \textbf{Step 1: Data Preparation}
-\State Initialize a structured dataset (\texttt{Dataset}) to store pseudocode and corresponding code implementations.
-\State Save the dataset to a file format suitable for downstream evaluation (e.g., \texttt{PreparedDataset.csv}).
-
-\State \textbf{Step 2: Model Configuration}
-\State Configure a pre-trained generative AI model for code generation, specifying the appropriate API key or model parameters.
-
-\State \textbf{Step 3: Pseudocode-to-Code Translation}
-\For{each pseudocode sample in the dataset}
-    \State \textbf{Input:} Provide the pseudocode as input to the generative model.
-    \State \textbf{Prompt Engineering:} Design prompts to elicit:
-    \begin{itemize}
-        \item \textbf{Python Code Generation:} Generate Python code corresponding to the pseudocode.
-        \item \textbf{Java Code Generation:} Generate Java code corresponding to the pseudocode.
-    \end{itemize}
-    \State \textbf{Output:} Store the generated Java and Python code in the dataset.
-\EndFor
-
-\State \textbf{Step 4: Dataset Augmentation}
-\State Expand the dataset by integrating additional samples, if available, from a secondary pseudocode dataset.
-
-\State \textbf{Step 5: Model Evaluation (Optional)}
-\State Evaluate the generative AI model's output using code correctness and functional equivalence metrics, comparing with ground truth implementations if available.
-
-\State \textbf{Step 6: Dataset Finalization}
-\State Save the augmented dataset, including all pseudocode and generated implementations, to facilitate reproducibility and further research.
-
-\end{algorithmic}
-\end{algorithm}
 
 \subsubsection{Dataset Statistics} The final dataset contains 667 rows, each representing a pseudocode instruction alongside its semantically equivalent Java and Python implementations. This structured dataset serves as the foundation for training and evaluating the T5-based code translation model. As noted earlier, the pseudocode column was not used in training, but only for prompts to Gemini API, which generated the corresponding Java and Python program snippets.
 
@@ -351,49 +402,6 @@ def count_ways(s):
 
 This dataset is critical in providing the T5 model with sufficient paired training samples to learn effective code translation between Java and Python.
 
-\begin{algorithm}
-\caption{Training and Evaluation of a Code Translation Model}
-\label{alg:code_translation}
-\begin{algorithmic}[1]
-\Require 
-\begin{itemize}
-    \item A pre-trained T5 transformer model.
-    \item A parallel dataset of Java and Python code samples.
-\end{itemize}
-\Ensure A fine-tuned model capable of translating Java code to Python.
-
-\State \textbf{Step 1: Model Initialization}
-\State Load a pre-trained T5 transformer as the base translation model.
-\State Configure the model for the specified hardware (e.g., GPU or CPU).
-
-\State \textbf{Step 2: Data Preparation}
-\State Retrieve a parallel dataset containing Java code and corresponding Python translations.
-\State Split the dataset into training and validation subsets (e.g., 75\% for training, 25\% for validation).
-
-\State \textbf{Step 3: Model Fine-Tuning}
-\State Fine-tune the T5 transformer using the training dataset:
-\begin{itemize}
-    \item Define the loss function to minimize translation error.
-    \item Optimize hyperparameters such as batch size, learning rate, and number of epochs.
-\end{itemize}
-
-\State \textbf{Step 4: Evaluation}
-\State Evaluate the fine-tuned model on the validation dataset:
-\begin{itemize}
-    \item Measure translation accuracy using metrics such as BLEU or exact match accuracy.
-    \item Analyze error patterns to identify potential areas for improvement.
-\end{itemize}
-
-\State \textbf{Step 5: Inference}
-\State Provide the fine-tuned model with unseen Java code samples.
-\State Generate Python translations for the input samples.
-\State Analyze the outputs qualitatively and quantitatively.
-
-\State \textbf{Step 6: Model Deployment}
-\State Save the fine-tuned model and tokenizer to a persistent storage system for future inference and experimentation.
-
-\end{algorithmic}
-\end{algorithm}
 
 
 
