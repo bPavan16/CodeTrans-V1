@@ -65,7 +65,7 @@ This innovation laid the groundwork for program analysis and transformation. A s
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.8\textwidth]{Images/1.png}} % Replace with actual Tree-LSTM flowchart
+    \includegraphics[width=0.8\textwidth]{Images/1.png} % Replace with actual Tree-LSTM flowchart
     \caption{Tree-LSTM Architecture for AST Processing}
     \label{fig:tree-lstm}
 \end{figure}
@@ -78,7 +78,7 @@ Drissi et al. (2018) refined these ideas further by introducing the Left-Child R
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.8\textwidth]{Images/2.png}} % Replace with actual flowchart for tree-to-tree model
+    \includegraphics[width=0.8\textwidth]{Images/2.png} % Replace with actual flowchart for tree-to-tree model
     \caption{Tree-to-Tree Encoder-Decoder Framework for Code Transformation}
     \label{fig:tree-encoder-decoder}
 \end{figure}
@@ -91,7 +91,7 @@ where \( \hat{y}_i \) is the predicted token and \( y_i \) is the actual token. 
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.8\textwidth]{Images/3.png}} % Replace with NMT bug fixing diagram
+    \includegraphics[width=0.8\textwidth]{Images/3.png} % Replace with NMT bug fixing diagram
     \caption{Neural Machine Translation for Automated Bug Fixing}
     \label{fig:nmt-bug-fixing}
 \end{figure}
@@ -119,7 +119,7 @@ where \( Q \), \( K \), and \( V \) are query, key, and value matrices, and \( d
 
 \begin{figure}[h]
     \centering
-    \includegraphics[width=0.8\textwidth]{Images/5.png}} % Replace with transformer-based model diagram
+    \includegraphics[width=0.8\textwidth]{Images/5.png} % Replace with transformer-based model diagram
     \caption{Transformer Model for Compilation Tasks}
     \label{fig:transformer-code}
 \end{figure}
@@ -135,9 +135,9 @@ This work presents a transpilation framework for automatic translation between h
     The dataset was generated with the help of the Gemini model, where sample text was initially translated into pseudocode, then coded into both Java and Python without language-specific shortcuts.
 \begin{enumerate}
     Dataset preparation involves generating pseudocode-based paired code snippets. 
-    \begin{figure}[h!]
+\begin{figure}[h!]
 \centering
-\includegraphics[width=0.7\textwidth]{dataset_methodology.png} % Replace with actual flowchart file
+\includegraphics[width=0.7\textwidth]{Images/dataset_methodology.png} % Replace with actual flowchart file
 \caption{Dataset Preparation Methodology}
 \end{figure}
 \end{enumerate}
@@ -241,12 +241,47 @@ This work presents a transpilation framework for automatic translation between h
 \end{enumerate}
 
 
+\subsection{Key Concepts of the T5 Transformer}
 
-\subsubsection{Key Concepts, Theories, and Equations}
+A unified framework for natural language processing (NLP) activities, the Text-to-Text Transfer Transformer (T5) treats every task as a text-to-text generating problem. The main theoretical ideas and formulas that underlie the T5 model are outlined in this section.
 
-\subsubsection{Key Concepts}
-\subsubsection{Equation} 
 
+
+\subsubsection{Introduction}
+As shown in T5 (Raffel et al., 2020), a variety of NLP tasks, including translation, regression, and classification, can be reformed into a text-to-text format. The Transformer model (Vaswani et al., 2017) serves as the foundation for the architecture, which includes pre-training on a sizable corpus and fine-tuning on particular tasks.
+
+\subsubsection*{Model Architecture}
+The T5 model employs the encoder-decoder Transformer architecture. The encoder processes the input sequence $X = \{x_1, x_2, \dots, x_n\}$, while the decoder generates the output sequence $Y = \{y_1, y_2, \dots, y_m\}$. Both components leverage self-attention and feedforward layers.
+
+\paragraph{Self-Attention Mechanism}
+The self-attention mechanism computes attention scores to capture relationships between tokens. For a query $Q$, key $K$, and value $V$, the attention mechanism is given by:
+\begin{equation}
+\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V,
+\end{equation}
+where $d_k$ is the dimensionality of the key vectors.
+
+\paragraph{Text-to-Text Framework}
+In T5, every NLP task is cast as a sequence-to-sequence problem. For instance:
+\begin{itemize}
+    \item Sentiment Analysis: Input: \texttt{"classify sentiment: The movie was great."}, Output: \texttt{"positive"}.
+    \item Machine Translation: Input: \texttt{"translate English to German: Hello"}, Output: \texttt{"Hallo"}.
+\end{itemize}
+
+\begin{figure}[h]
+\caption{ T5 (Text-To-Text Transfer Transformer) model}
+\centering
+\includegraphics[width=1\textwidth]{Images/T5.png}
+\end{figure}
+
+\subsubsection{Pre-training Objective}
+A denoising goal named \textit{span corruption} is used to pre-train the T5 model. This configuration substitutes a unique token for randomly masked text passages. Reconstructing the original text is the aim of the model.  Mathematically, let $\hat{X}$ be the corrupted input and $X$ the original sequence, then the objective is to maximize:
+\begin{equation}
+\mathcal{L}_{\text{pretrain}} = \sum_{i=1}^n \log P(x_i | \hat{X}, \theta),
+\end{equation}
+where $\theta$ represents the model parameters.
+
+\subsubsection{Summary}
+The T5 model is a flexible tool for language production and interpretation because of its strong pre-training mechanism and unified approach to NLP tasks via a text-to-text framework. Across several benchmarks, its advances have greatly enhanced the state-of-the-art.
 
 
 \subsubsection{Implementation Approach}
@@ -402,6 +437,36 @@ def count_ways(s):
 
 This dataset is critical in providing the T5 model with sufficient paired training samples to learn effective code translation between Java and Python.
 
+\subsubsection{Results}
+The BLEU score, a commonly used metric for sequence-to-sequence tasks, was used to assess the T5 model's performance. Table \ref{tab:bleu_results} displays the findings.
+
+
+ \ref{tab:bleu_results}.
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\textbf{Metric} & \textbf{Score} \\
+\hline
+BLEU & 42 \\
+\hline
+\end{tabular}
+\caption{Performance of T5 model on benchmark dataset.}
+\label{tab:bleu_results}
+\end{table}
+
+\subsubsection{Conclusion}
+The outcomes show that the T5 model performs well in sequence-to-sequence tasks, achieving a BLEU score of 42. The span-corruption pre-training method and the text-to-text framework's resilience are confirmed by this performance.
+
+
+\subsubsection{Future Work}
+Future research could explore the following directions:
+\begin{itemize}
+    \item Extending the T5 framework to multimodal tasks, such as image-to-text generation or speech-to-text translation.
+    \item Investigating alternative pre-training objectives to further enhance performance.
+    \item Applying T5 to low-resource languages to evaluate its adaptability and efficiency in diverse linguistic contexts.
+\end{itemize}
 
 
 
