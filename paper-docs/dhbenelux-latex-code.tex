@@ -182,6 +182,21 @@ for instruction in pseudocode_list:
     dataset.append((java_snippet, python_snippet))
 \end{lstlisting}
 
+\subsubsection{Data Generation Pipeline}
+The data preparation process included the following steps:
+\begin{enumerate}
+  \item \textbf{Configuration and API Integration:} The Google Gemini API (model version \texttt{gemini-1.5-flash}) was configured with an API key to serve as the generative backend for converting pseudocode to programming language implementations. Requests to the API were structured as detailed prompts, instructing the model to generate code directly fulfilling the pseudocode requirements.
+  \item \textbf{Dataset Initialization:} A pandas DataFrame was initialized with three columns: \texttt{Pseudo Code}, \texttt{Java}, and \texttt{Python}. This served as the core structure for storing and updating the dataset as new code samples were generated.
+  \item \textbf{Code Generation Process:} For each pseudocode entry:
+    \begin{itemize}
+        \item A prompt was sent to the Gemini API to generate a Python implementation, explicitly requesting a functional code block without comments or extraneous text.
+        \item A second prompt generated the corresponding Java implementation under the same constraints.
+        \item The responses were post-processed to ensure clean and consistent formatting.
+    \end{itemize}
+  \item \textbf{API Rate Limiting:} To avoid overwhelming the API and ensure adherence to rate-limiting constraints, a delay of 4 seconds was enforced between consecutive requests.
+  \item \textbf{Balancing Java and Python Sources:} The process was repeated for both the Java-oriented and Python-oriented pseudocode collections, with 667 examples processed from each collection to ensure balance and diversity across languages.
+\end{enumerate}
+
 \subsubsection{Dataset Statistics} The final dataset contains 667 rows, each representing a pseudocode instruction alongside its semantically equivalent Java and Python implementations. This structured dataset serves as the foundation for training and evaluating the T5-based code translation model. As noted earlier, the pseudocode column was not used in training, but only for prompts to Gemini API, which generated the corresponding Java and Python program snippets.
 
 \begin{table}[h!]
@@ -288,6 +303,53 @@ def count_ways(s):
     \item \textbf{Scalability:} The framework can be extended to other languages.
     \item \textbf{Diversity:} Supports semantic and syntactic variability.
 \end{enumerate}
+
+This dataset is critical in providing the T5 model with sufficient paired training samples to learn effective code translation between Java and Python.
+
+\begin{algorithm}
+\caption{Training and Evaluation of a Code Translation Model}
+\label{alg:code_translation}
+\begin{algorithmic}[1]
+\Require 
+\begin{itemize}
+    \item A pre-trained T5 transformer model.
+    \item A parallel dataset of Java and Python code samples.
+\end{itemize}
+\Ensure A fine-tuned model capable of translating Java code to Python.
+
+\State \textbf{Step 1: Model Initialization}
+\State Load a pre-trained T5 transformer as the base translation model.
+\State Configure the model for the specified hardware (e.g., GPU or CPU).
+
+\State \textbf{Step 2: Data Preparation}
+\State Retrieve a parallel dataset containing Java code and corresponding Python translations.
+\State Split the dataset into training and validation subsets (e.g., 75\% for training, 25\% for validation).
+
+\State \textbf{Step 3: Model Fine-Tuning}
+\State Fine-tune the T5 transformer using the training dataset:
+\begin{itemize}
+    \item Define the loss function to minimize translation error.
+    \item Optimize hyperparameters such as batch size, learning rate, and number of epochs.
+\end{itemize}
+
+\State \textbf{Step 4: Evaluation}
+\State Evaluate the fine-tuned model on the validation dataset:
+\begin{itemize}
+    \item Measure translation accuracy using metrics such as BLEU or exact match accuracy.
+    \item Analyze error patterns to identify potential areas for improvement.
+\end{itemize}
+
+\State \textbf{Step 5: Inference}
+\State Provide the fine-tuned model with unseen Java code samples.
+\State Generate Python translations for the input samples.
+\State Analyze the outputs qualitatively and quantitatively.
+
+\State \textbf{Step 6: Model Deployment}
+\State Save the fine-tuned model and tokenizer to a persistent storage system for future inference and experimentation.
+
+\end{algorithmic}
+\end{algorithm}
+
 
 
 % Above this corrections needed.
