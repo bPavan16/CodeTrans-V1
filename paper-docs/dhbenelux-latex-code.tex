@@ -197,6 +197,51 @@ The data preparation process included the following steps:
   \item \textbf{Balancing Java and Python Sources:} The process was repeated for both the Java-oriented and Python-oriented pseudocode collections, with 667 examples processed from each collection to ensure balance and diversity across languages.
 \end{enumerate}
 
+\begin{algorithm}
+\caption{Automated Generation of Code Implementations from Pseudocode}
+\label{alg:code_generation}
+\begin{algorithmic}[1]
+\Require 
+\begin{itemize}
+    \item A dataset of pseudocode samples with corresponding Java and/or Python code (if available).
+    \item A generative AI model pre-trained on natural language and code (e.g., Gemini-1.5).
+\end{itemize}
+\Ensure 
+\begin{itemize}
+    \item A comprehensive dataset containing pseudocode and its generated Java and Python implementations.
+    \item Evaluation-ready outputs for benchmarking generative model performance.
+\end{itemize}
+
+\State \textbf{Step 1: Data Preparation}
+\State Initialize a structured dataset (\texttt{Dataset}) to store pseudocode and corresponding code implementations.
+\State Save the dataset to a file format suitable for downstream evaluation (e.g., \texttt{PreparedDataset.csv}).
+
+\State \textbf{Step 2: Model Configuration}
+\State Configure a pre-trained generative AI model for code generation, specifying the appropriate API key or model parameters.
+
+\State \textbf{Step 3: Pseudocode-to-Code Translation}
+\For{each pseudocode sample in the dataset}
+    \State \textbf{Input:} Provide the pseudocode as input to the generative model.
+    \State \textbf{Prompt Engineering:} Design prompts to elicit:
+    \begin{itemize}
+        \item \textbf{Python Code Generation:} Generate Python code corresponding to the pseudocode.
+        \item \textbf{Java Code Generation:} Generate Java code corresponding to the pseudocode.
+    \end{itemize}
+    \State \textbf{Output:} Store the generated Java and Python code in the dataset.
+\EndFor
+
+\State \textbf{Step 4: Dataset Augmentation}
+\State Expand the dataset by integrating additional samples, if available, from a secondary pseudocode dataset.
+
+\State \textbf{Step 5: Model Evaluation (Optional)}
+\State Evaluate the generative AI model's output using code correctness and functional equivalence metrics, comparing with ground truth implementations if available.
+
+\State \textbf{Step 6: Dataset Finalization}
+\State Save the augmented dataset, including all pseudocode and generated implementations, to facilitate reproducibility and further research.
+
+\end{algorithmic}
+\end{algorithm}
+
 \subsubsection{Dataset Statistics} The final dataset contains 667 rows, each representing a pseudocode instruction alongside its semantically equivalent Java and Python implementations. This structured dataset serves as the foundation for training and evaluating the T5-based code translation model. As noted earlier, the pseudocode column was not used in training, but only for prompts to Gemini API, which generated the corresponding Java and Python program snippets.
 
 \begin{table}[h!]
