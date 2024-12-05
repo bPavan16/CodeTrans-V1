@@ -9,10 +9,6 @@
 \usepackage{tabularx}
 \usepackage{longtable} % For long tables (if needed)
 \usepackage{adjustbox}
-\usepackage{amsmath}
-\usepackage{algorithm}
-\usepackage{algpseudocode}
-
 
 
 
@@ -96,8 +92,8 @@ where \( \hat{y}_i \) is the predicted token and \( y_i \) is the actual token. 
     \label{fig:nmt-bug-fixing}
 \end{figure}
 
-Lachaux et al. (2020) introduced TransCoder, a system for translating functions between programming languages without requiring parallel training data. By leveraging monolingual source code and unsupervised learning techniques, TransCoder captured language-specific patterns. The objective was to minimize a combined reconstruction and translation loss:
-\[
+    Lachaux et al. (2020) introduced TransCoder, a system for translating functions between programming languages without requiring parallel training data. By leveraging monolingual source code and unsupervised learning techniques, TransCoder captured language-specific patterns. The objective was to minimize a combined reconstruction and translation loss:
+    \[
 \mathcal{L} = \mathcal{L}_{\text{reconstruction}} + \mathcal{L}_{\text{translation}},
 \]
 where \( \mathcal{L}_{\text{reconstruction}} \) ensures that monolingual data reconstructs correctly, and \( \mathcal{L}_{\text{translation}} \) aligns the latent spaces of source and target languages. TransCoder outperformed rule-based systems, showcasing robust language-agnostic representations.
@@ -132,204 +128,79 @@ These advancements collectively illustrate the evolution of machine learning tec
 This work presents a transpilation framework for automatic translation between high-level programming languages, namely Java and Python, using a fine-tuned T5-small model. The framework employs the encoder-decoder architecture of T5-small to capture syntactic and semantic differences between these languages. The implementation focuses on training and inference, achieving a robust pipeline for translating Java code into Python.
 
 \subsection{Dataset preparation}
-    The dataset was generated with the help of the Gemini model, where sample text was initially translated into pseudocode, then coded into both Java and Python without language-specific shortcuts.
+    The data preparation methodology involves a series of systematic steps designed to generate and balance pseudo code, Python, and Java code from text descriptions using Google Generative AI. The AI is guided to produce language-agnostic code that avoids language-specific built-in functions and dependencies, thus enhancing cross-language versatility. Data management is done using the pandas library, where generated outputs are appended to maintain an equal representation across different programming languages. The process has mitigated rate limit issues due to APIs; time.sleep is integrated for a delay between API calls to ensure smooth-running operations, and dynamic adjustment is carried out in regard to changing dataset sizes for this process. Finally, validation and saving of the last dataset are completed as a dependable source for future cross-language training and subsequent computational analysis.
+   \\\\\\ 
 \begin{enumerate}
-    Dataset preparation involves generating pseudocode-based paired code snippets. 
-\begin{figure}[h!]
+    \begin{figure}[h!]
 \centering
-\includegraphics[width=0.7\textwidth]{Images/dataset_methodology.png} % Replace with actual flowchart file
+\includegraphics[width=0.7\textwidth]{dataset_methodology.png} % Replace with actual flowchart file
 \caption{Dataset Preparation Methodology}
 \end{figure}
-\end{enumerate}
-\subsubsection{Algorithms and Processes}
 
-\begin{algorithm}
-\caption{Automated Generation of Code Implementations from Pseudocode}
-\label{alg:code_generation}
-\begin{algorithmic}[1]
-\Require 
-\begin{itemize}
-    \item A dataset of pseudocode samples with corresponding Java and/or Python code (if available).
-    \item A generative AI model pre-trained on natural language and code (e.g., Gemini-1.5).
-\end{itemize}
-\Ensure 
-\begin{itemize}
-    \item A comprehensive dataset containing pseudocode and its generated Java and Python implementations.
-    \item Evaluation-ready outputs for benchmarking generative model performance.
-\end{itemize}
+\subsubsection{Algorithms}
 
-\State \textbf{Step 1: Data Preparation}
-\State Initialize a structured dataset (\texttt{Dataset}) to store pseudocode and corresponding code implementations.
-\State Save the dataset to a file format suitable for downstream evaluation (e.g., \texttt{PreparedDataset.csv}).
-
-\State \textbf{Step 2: Model Configuration}
-\State Configure a pre-trained generative AI model for code generation, specifying the appropriate API key or model parameters.
-
-\State \textbf{Step 3: Pseudocode-to-Code Translation}
-\For{each pseudocode sample in the dataset}
-    \State \textbf{Input:} Provide the pseudocode as input to the generative model.
-    \State \textbf{Prompt Engineering:} Design prompts to elicit:
-    \begin{itemize}
-        \item \textbf{Python Code Generation:} Generate Python code corresponding to the pseudocode.
-        \item \textbf{Java Code Generation:} Generate Java code corresponding to the pseudocode.
-    \end{itemize}
-    \State \textbf{Output:} Store the generated Java and Python code in the dataset.
-\EndFor
-
-\State \textbf{Step 4: Dataset Augmentation}
-\State Expand the dataset by integrating additional samples, if available, from a secondary pseudocode dataset.
-
-\State \textbf{Step 5: Model Evaluation (Optional)}
-\State Evaluate the generative AI model's output using code correctness and functional equivalence metrics, comparing with ground truth implementations if available.
-
-\State \textbf{Step 6: Dataset Finalization}
-\State Save the augmented dataset, including all pseudocode and generated implementations, to facilitate reproducibility and further research.
-
-\end{algorithmic}
-\end{algorithm}
-
-\begin{algorithm}
-\caption{Training and Evaluation of a Code Translation Model}
-\label{alg:code_translation}
-\begin{algorithmic}[1]
-\Require 
-\begin{itemize}
-    \item A pre-trained T5 transformer model.
-    \item A parallel dataset of Java and Python code samples.
-\end{itemize}
-\Ensure A fine-tuned model capable of translating Java code to Python.
-
-\State \textbf{Step 1: Model Initialization}
-\State Load a pre-trained T5 transformer as the base translation model.
-\State Configure the model for the specified hardware (e.g., GPU or CPU).
-
-\State \textbf{Step 2: Data Preparation}
-\State Retrieve a parallel dataset containing Java code and corresponding Python translations.
-\State Split the dataset into training and validation subsets (e.g., 75\% for training, 25\% for validation).
-
-\State \textbf{Step 3: Model Fine-Tuning}
-\State Fine-tune the T5 transformer using the training dataset:
-\begin{itemize}
-    \item Define the loss function to minimize translation error.
-    \item Optimize hyperparameters such as batch size, learning rate, and number of epochs.
-\end{itemize}
-
-\State \textbf{Step 4: Evaluation}
-\State Evaluate the fine-tuned model on the validation dataset:
-\begin{itemize}
-    \item Measure translation accuracy using metrics such as BLEU or exact match accuracy.
-    \item Analyze error patterns to identify potential areas for improvement.
-\end{itemize}
-
-\State \textbf{Step 5: Inference}
-\State Provide the fine-tuned model with unseen Java code samples.
-\State Generate Python translations for the input samples.
-\State Analyze the outputs qualitatively and quantitatively.
-
-\State \textbf{Step 6: Model Deployment}
-\State Save the fine-tuned model and tokenizer to a persistent storage system for future inference and experimentation.
-
-\end{algorithmic}
-\end{algorithm}
-
-
-\subsubsection{Dataset Preparation Process}
-\begin{enumerate}
-    \item \textbf{API Integration:} Using Gemini API to generate Java and Python implementations from pseudocode instructions.
-    \item \textbf{Balancing Data:} Ensuring equal representation of Java and Python code pairs.
-    \item \textbf{Rate Limiting:} Adding a delay of 4 seconds between requests to comply with API usage limits.
-\end{enumerate}
-
-
-\subsection{Key Concepts of the T5 Transformer}
-
-A unified framework for natural language processing (NLP) activities, the Text-to-Text Transfer Transformer (T5) treats every task as a text-to-text generating problem. The main theoretical ideas and formulas that underlie the T5 model are outlined in this section.
-
-
-
-\subsubsection{Introduction}
-As shown in T5 (Raffel et al., 2020), a variety of NLP tasks, including translation, regression, and classification, can be reformed into a text-to-text format. The Transformer model (Vaswani et al., 2017) serves as the foundation for the architecture, which includes pre-training on a sizable corpus and fine-tuning on particular tasks.
-
-\subsubsection*{Model Architecture}
-The T5 model employs the encoder-decoder Transformer architecture. The encoder processes the input sequence $X = \{x_1, x_2, \dots, x_n\}$, while the decoder generates the output sequence $Y = \{y_1, y_2, \dots, y_m\}$. Both components leverage self-attention and feedforward layers.
-
-\paragraph{Self-Attention Mechanism}
-The self-attention mechanism computes attention scores to capture relationships between tokens. For a query $Q$, key $K$, and value $V$, the attention mechanism is given by:
-\begin{equation}
-\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V,
-\end{equation}
-where $d_k$ is the dimensionality of the key vectors.
-
-\paragraph{Text-to-Text Framework}
-In T5, every NLP task is cast as a sequence-to-sequence problem. For instance:
-\begin{itemize}
-    \item Sentiment Analysis: Input: \texttt{"classify sentiment: The movie was great."}, Output: \texttt{"positive"}.
-    \item Machine Translation: Input: \texttt{"translate English to German: Hello"}, Output: \texttt{"Hallo"}.
-\end{itemize}
+    The process of data preparation is done through several key steps to ensure the quality of the generated data as being both balanced and effective. We \textbf{integrate the Gemini API}, which creates structured API calls that transform pseudocode into corresponding code snippets, starting with Java and Python code generation from pseudocode instructions. Next, we \textbf{balance the data} so that we have equal numbers of pairs of Java and Python code by keeping the dataset fair to allow for cross-language training. Last but not least, we implement a 4-second delay between requests in order not to hit \textbf{API rate limits}. That's essential to avoid hitting any breaks during the process. These steps combined result in a dataset that is reliable, well-rounded, and ready for further use.
 
 \begin{figure}[h]
-\caption{ T5 (Text-To-Text Transfer Transformer) model}
-\centering
-\includegraphics[width=1\textwidth]{Images/T5.png}
+    \centering
+    \includegraphics[width=0.6\textwidth]{algorithm.png} 
+    \caption{Algorithm}
+    \label{fig:Algorithm}
 \end{figure}
-
-\subsubsection{Pre-training Objective}
-A denoising goal named \textit{span corruption} is used to pre-train the T5 model. This configuration substitutes a unique token for randomly masked text passages. Reconstructing the original text is the aim of the model.  Mathematically, let $\hat{X}$ be the corrupted input and $X$ the original sequence, then the objective is to maximize:
-\begin{equation}
-\mathcal{L}_{\text{pretrain}} = \sum_{i=1}^n \log P(x_i | \hat{X}, \theta),
-\end{equation}
-where $\theta$ represents the model parameters.
-
-\subsubsection{Summary}
-The T5 model is a flexible tool for language production and interpretation because of its strong pre-training mechanism and unified approach to NLP tasks via a text-to-text framework. Across several benchmarks, its advances have greatly enhanced the state-of-the-art.
+\\
 
 
-\subsubsection{Implementation Approach}
 
-\paragraph{Data Preparation} The dataset consists of 667 paired Java and Python code snippets generated from pseudocode. Each entry includes:
-\begin{itemize}
-    \item Pseudocode instruction.
-    \item Corresponding Java and Python code snippets.
-\end{itemize}
 
-\paragraph{Challenges and Solutions}
-\begin{itemize}
-    \item \textbf{Challenge:} Imbalanced pseudocode instructions and inbuilt attribute or properties of a code, syntax, and semantics difference between Java and Python.
-    \item \textbf{Solution:} Curated a balanced dataset with an equal number of Java and Python snippets.
-    \item \textbf{Challenge:} Handling API rate limits.
-    \item \textbf{Solution:} Introduced a delay mechanism between API calls.
-\end{itemize}
+Generative AI, for example, Google Gemini-1.5, makes use of advanced large-scale language models trained on multiple datasets to process natural language prompts and generate programmatic code in multiple languages. The technology allows for context-aware mechanisms to be used for accurate and versatile code generation. For data handling, the system uses Pandas, a Python-based data manipulation library to efficiently read, update, and save datasets in structured formats like.csv. It offers concatenation and indexing functionalities that can append newly created outputs including pseudo-code, Python and Java code into the system iteratively. This approach to workflow automation allows more scalability and consistency across different prompts. Moreover, for cross-language compatibility, this model designs its prompts such that they do not rely on the built-in functions that exist in other languages, allowing easy translations across languages.
 
-\subsubsection{Pseudo-code}
+The self-attention mechanism is a fundamental component of the transformer architecture, computing relative relationships between input tokens according to the following equation:
+
+\[
+\text{Self-Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d}}\right)V
+\]  
+where \( Q \) (query), \( K \) (key), and \( V \) (value) matrices are derived from input embeddings through learned transformations. The scaling factor \( \sqrt{d} \) stabilizes softmax probabilities, focusing computational resources on the most relevant tokens. Layer normalization further stabilizes model training by normalizing input vectors through the formula:  
+\[
+\text{Norm}(x) = \frac{x - \mu}{\sigma + \epsilon}
+\]  
+where \( \mu \) is the mean, \( \sigma \) is the standard deviation, and \( \epsilon \) is a small constant for numerical stability. The feedforward layers in transformers enhance the model’s non-linear learning capacity, expressed as:  
+\[
+\text{FFN}(x) = \text{max}(0, xW_1 + b_1)W_2 + b_2
+\]  
+where \( W_1 \), \( W_2 \) are weight matrices, and \( b_1 \), \( b_2 \) are bias vectors. Lastly, cross-entropy loss optimizes the model by minimizing the error between true labels (\( y_i \)) and predictions (\( \hat{y}_i \)) using:  
+\[
+L = -\sum_{i=1}^N y_i \log(\hat{y}_i)
+\]  
+These interconnected methodologies ensure the system’s robustness and precision in generating cross-compatible, efficient programmatic solutions.\\ 
+
+
+
+
+The process begins with feeding a set of text instructions into the Gemini model to generate pseudocode, an abstract, language-agnostic representation of the program's logic. The pseudocode is then fed again into Gemini to produce executable code snippets in both Java and Python. This ensures that the generated code snippets remain independent of specific language attributes or properties, such as Python's \\text{.reverse()} method. This is done to make the output more versatile and compliant with wider standards of programming; that it is not dependent on specific inbuilt functions or language syntaxes. Through this two-stage process, the method ensures production of modular, efficient, and language-independent code.
+
+\\
 
 \noindent Example of the data generation process in pseudo-code:
-\begin{lstlisting}[language=Python, caption={Pseudocode for Dataset Preparation}]
+\begin{lstlisting}[language=Python, caption={Pseudocode for Dataset Preparation}]\\
 # Generate paired Java and Python snippets
 for instruction in pseudocode_list:
     java_snippet = generate_code(instruction, "Java")
     python_snippet = generate_code(instruction, "Python")
     dataset.append((java_snippet, python_snippet))
 \end{lstlisting}
+\\
 
-\subsubsection{Data Generation Pipeline}
-The data preparation process included the following steps:
-\begin{enumerate}
-  \item \textbf{Configuration and API Integration:} The Google Gemini API (model version \texttt{gemini-1.5-flash}) was configured with an API key to serve as the generative backend for converting pseudocode to programming language implementations. Requests to the API were structured as detailed prompts, instructing the model to generate code directly fulfilling the pseudocode requirements.
-  \item \textbf{Dataset Initialization:} A pandas DataFrame was initialized with three columns: \texttt{Pseudo Code}, \texttt{Java}, and \texttt{Python}. This served as the core structure for storing and updating the dataset as new code samples were generated.
-  \item \textbf{Code Generation Process:} For each pseudocode entry:
-    \begin{itemize}
-        \item A prompt was sent to the Gemini API to generate a Python implementation, explicitly requesting a functional code block without comments or extraneous text.
-        \item A second prompt generated the corresponding Java implementation under the same constraints.
-        \item The responses were post-processed to ensure clean and consistent formatting.
-    \end{itemize}
-  \item \textbf{API Rate Limiting:} To avoid overwhelming the API and ensure adherence to rate-limiting constraints, a delay of 4 seconds was enforced between consecutive requests.
-  \item \textbf{Balancing Java and Python Sources:} The process was repeated for both the Java-oriented and Python-oriented pseudocode collections, with 667 examples processed from each collection to ensure balance and diversity across languages.
-\end{enumerate}
+\begin{itemize}
+One of the main challenges during implementation was that there was an imbalance between the pseudocode instructions and significant differences in syntax and semantics between Java and Python. The approach to this was a balanced dataset, where the number of Java and Python snippets were equal to each other for consistency and compatibility. The other challenge was that API rate limits could break up iterative workflows. This problem was solved by incorporating a delay mechanism between API calls, thus making sure the system respects rate constraints while executing uninterruptedly.
+\end{itemize}
+
+\section{ Results and Analysis}
+
 
 
 
 \subsubsection{Dataset Statistics} The final dataset contains 667 rows, each representing a pseudocode instruction alongside its semantically equivalent Java and Python implementations. This structured dataset serves as the foundation for training and evaluating the T5-based code translation model. As noted earlier, the pseudocode column was not used in training, but only for prompts to Gemini API, which generated the corresponding Java and Python program snippets.
-
+\\
 \begin{table}[h!]
 \centering
 \adjustbox{max width=\textwidth}{ % Scale table to fit within page width
@@ -435,46 +306,24 @@ def count_ways(s):
     \item \textbf{Diversity:} Supports semantic and syntactic variability.
 \end{enumerate}
 
-This dataset is critical in providing the T5 model with sufficient paired training samples to learn effective code translation between Java and Python.
-
-\subsubsection{Results}
-The BLEU score, a commonly used metric for sequence-to-sequence tasks, was used to assess the T5 model's performance. Table \ref{tab:bleu_results} displays the findings.
-
-
- \ref{tab:bleu_results}.
-
-\begin{table}[h!]
-\centering
-\begin{tabular}{|c|c|}
-\hline
-\textbf{Metric} & \textbf{Score} \\
-\hline
-BLEU & 42 \\
-\hline
-\end{tabular}
-\caption{Performance of T5 model on benchmark dataset.}
-\label{tab:bleu_results}
-\end{table}
-
-\subsubsection{Conclusion}
-The outcomes show that the T5 model performs well in sequence-to-sequence tasks, achieving a BLEU score of 42. The span-corruption pre-training method and the text-to-text framework's resilience are confirmed by this performance.
-
-
-\subsubsection{Future Work}
-Future research could explore the following directions:
-\begin{itemize}
-    \item Extending the T5 framework to multimodal tasks, such as image-to-text generation or speech-to-text translation.
-    \item Investigating alternative pre-training objectives to further enhance performance.
-    \item Applying T5 to low-resource languages to evaluate its adaptability and efficiency in diverse linguistic contexts.
-\end{itemize}
-
-
-
 % Above this corrections needed.
 %
 %
 %
 %
 %
-
 \end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
