@@ -9,10 +9,13 @@
 \usepackage{tabularx}
 \usepackage{longtable} % For long tables (if needed)
 \usepackage{adjustbox}
-\usepackage{amsmath}
+\usepackage{amsmath} % for math equations
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{verbatim}
+\usepackage{mathtools} % additional math features
+%% \usepackage{cleveref} % smart cross-referencing
+\usepackage{hyperref} % put hyperref last
 
 \author[1]{Anirudh Dambal}
 \author[1]{Harish Patil}
@@ -29,25 +32,11 @@ Using T5-Small}
 
 \maketitle
 
-\begin{comment}
-    
-
-\begin{abstract}
-    \noindent {This paper introduces a new method of code-to-code translation from Java to Python using the T5-small transformer model, based on a custom-generated dataset. Previous works often depend on language-specific libraries or attributes; however, our dataset prohibits such inbuilt functionalities to promote the creation of fully translatable, algorithmically pure code. The dataset was generated with the help of the Gemini model, where sample text was initially translated into pseudocode, then coded into both Java and Python without language-specific shortcuts. This dataset was next used to train a T5-small model, which learned generalized patterns and structures for code translation. Evaluation results indicate the potential for using the T5-small model to translate Java code into Python with good accuracy in producing semantically equivalent and syntactically correct code. Our approach opens a promising direction for tool-assisted cross-language code translation, with significant implications for software development, maintenance, and education in multilingual coding environments.
-}
-\end{abstract}
-
-\begin{keywords}
-    {Transpilation, Encoder-Decoder Architecture, Multilingual Code Translation, Custom Dataset Generation, Pseudocode-Based Training, Gemini API, Cross-Language Programming}
-\end{keywords}
-
-\end{comment}
-
 \section{Introduction}
 
 Code-to-code translation addresses real-world challenges such as adapting legacy systems to new technologies, improving code maintainability, and increasing cross-language collaboration. For example, businesses transitioning from Java to Python may aim to leverage Python’s rich data science libraries without discarding years of development in Java. This requires reliable methods to convert existing codebases accurately while preserving their original logic and functionality.
 
-Domain-Specific Languages (DSLs) like Spark, NumPy, TACO, and P4 have changed the face of modern software development process by providing optimizations and abstractions tailored to specific applications. They improve code clarity, usability, and performance. However, they often require rewriting legacy code-a very tedious and error-prone process that risks changing the original behavior. Transpilation, or translating code between high-level languages, remains a significant challenge.
+Domain-Specific Languages (DSLs) like Spark, NumPy, TACO, and P4 have changed the face of modern software development process by providing optimizations and abstractions tailored to specific applications. They improve code clarity, usability, and performance. However, they often require rewriting legacy code—a very tedious and error-prone process that risks changing the original behavior. Transpilation, or translating code between high-level languages, remains a significant challenge.
 
 Recent advancements in Large Language Models (LLMs), such as BERT, GPT-3, and T5, have been promising in the automation of programming tasks like code generation and repair. Still, reliable code translation remains a challenge because most models lack robustness and correctness guarantees. In addition, formal verification tools depend on niche languages like SMT-LIB and Dafny, which are underrepresented in LLM training datasets, thus limiting their practical application.
 
@@ -59,11 +48,12 @@ The rest of the paper is organized as follows: Section 2 reviews related work, f
 
 \section{Related Work}
 
-The application of machine learning models to programming tasks has seen significant advancements in recent years. Early research focused on representing code for machine learning purposes, leveraging hierarchical structures such as Abstract Syntax Trees (ASTs). Researchers like Tai et al. (2015) introduced Tree-LSTM models, which encode tree structures by proce
-TMs extend the standard LSTM to handle tree-structured data by defining cell states and hidden states for each node \( i \) based on its child nodes \( C(i) \):
+The application of machine learning models to programming tasks has seen significant advancements in recent years. Early research focused on representing code for machine learning purposes, leveraging hierarchical structures such as Abstract Syntax Trees (ASTs). Researchers like Tai et al. (2015) introduced Tree-LSTM models, which encode tree structures by processing nodes iteratively. Tree-LSTM extends the standard LSTM to handle tree-structured data by defining cell states and hidden states for each node \( i \) based on its child nodes \( C(i) \). The formula for this is expressed in equation~\ref{eq:tree-lstm}:
 \begin{equation}
 h_i, c_i = \text{TreeLSTM}(x_i, \{h_{j}, c_{j} \,|\, j \in C(i)\}).
+\label{eq:tree-lstm}
 \end{equation}
+
 This innovation laid the groundwork for program analysis and transformation. A schematic representation of the Tree-LSTM architecture can be illustrated in Figure~\ref{fig:tree-lstm}.
 
 \begin{figure}[h]
@@ -73,10 +63,12 @@ This innovation laid the groundwork for program analysis and transformation. A s
     \label{fig:tree-lstm}
 \end{figure}
 
-Chen et al. (2018) extended this approach by proposing a tree-to-tree encoder-decoder framework tailored specifically for code. This framework enabled structured transformations between different tree representations, such as converting an AST of one language into another. The encoder mapped the source tree \( T_s \) into a latent representation \( z \), and the decoder reconstructed the target tree \( T_t \). Formally:
+Chen et al. (2018) extended this approach by proposing a tree-to-tree encoder-decoder framework tailored specifically for code. This framework enabled structured transformations between different tree representations, such as converting an AST of one language into another. The encoder mapped the source tree \( T_s \) into a latent representation \( z \), and the decoder reconstructed the target tree \( T_t \). This process is expressed in equation~\ref{eq:tree-to-tree}:
 \begin{equation}
 z = f_{\text{encoder}}(T_s), \quad T_t = f_{\text{decoder}}(z).
+\label{eq:tree-to-tree}
 \end{equation}
+
 Drissi et al. (2018) refined these ideas further by introducing the Left-Child Right-Sibling (LCRS) representation, simplifying tree encoding by reducing tree structures into binary trees, which proved effective for program translation tasks.
 
 \begin{figure}[h]
@@ -86,12 +78,12 @@ Drissi et al. (2018) refined these ideas further by introducing the Left-Child R
     \label{fig:tree-encoder-decoder}
 \end{figure}
 
-The advent of neural machine translation (NMT) frameworks inspired new applications beyond natural language. Tufano et al. (2018) explored automated bug fixing by applying NMT to software maintenance tasks. They mined GitHub for bug-fix commits and abstracted code changes into generalizable patterns. Using tools like GumTree for edit tracking, they trained models capable of generating patches resembling developer edits. The loss function used to train the model, minimizing syntactic and semantic differences between generated and ground truth patches, is expressed as:
+The advent of neural machine translation (NMT) frameworks inspired new applications beyond natural language. Tufano et al. (2018) explored automated bug fixing by applying NMT to software maintenance tasks. They mined GitHub for bug-fix commits and abstracted code changes into generalizable patterns. Using tools like GumTree for edit tracking, they trained models capable of generating patches resembling developer edits. The loss function used to train the model, minimizing syntactic and semantic differences between generated and ground truth patches, is expressed in equation~\ref{eq:nmt-bug-fixing}:
 \begin{equation}
 \mathcal{L} = \sum_{i=1}^N \text{CrossEntropy}(\hat{y}_i, y_i),
+\label{eq:nmt-bug-fixing}
 \end{equation}
 where \( \hat{y}_i \) is the predicted token and \( y_i \) is the actual token. Their approach achieved high syntactic correctness and underscored the utility of NMT in learning transformations at the AST level.
-
 \begin{figure}[h]
     \centering
     \includegraphics[width=0.8\textwidth]{Images/3.png} % Replace with NMT bug fixing diagram
@@ -99,9 +91,10 @@ where \( \hat{y}_i \) is the predicted token and \( y_i \) is the actual token. 
     \label{fig:nmt-bug-fixing}
 \end{figure}
 
-Lachaux et al. (2020) introduced TransCoder, a system for translating functions between programming languages without requiring parallel training data. By leveraging monolingual source code and unsupervised learning techniques, TransCoder captured language-specific patterns. The objective was to minimize a combined reconstruction and translation loss:
+Lachaux et al. (2020) introduced TransCoder, a system for translating functions between programming languages without requiring parallel training data. By leveraging monolingual source code and unsupervised learning techniques, TransCoder captured language-specific patterns. The objective was to minimize a combined reconstruction and translation loss, as described in equation \ref{eq:loss}:
 \begin{equation}
 \mathcal{L} = \mathcal{L}_{\text{reconstruction}} + \mathcal{L}_{\text{translation}},
+\label{eq:loss}
 \end{equation}
 where \( \mathcal{L}_{\text{reconstruction}} \) ensures that monolingual data reconstructs correctly, and \( \mathcal{L}_{\text{translation}} \) aligns the latent spaces of source and target languages. TransCoder outperformed rule-based systems, showcasing robust language-agnostic representations.
 
@@ -114,11 +107,11 @@ where \( \mathcal{L}_{\text{reconstruction}} \) ensures that monolingual data re
 
 Katz et al. (2019) addressed decompilation, converting low-level code to high-level programming languages. Traditional decompilers relied on expert-crafted rules, but Katz et al. proposed a neural model to reverse compiler processes. Their NMT-based framework achieved high success rates in translating LLVM IR and x86 assembly back to source code, with substantial improvements over rule-based systems. 
 
-More recently, Armengol-Estapé et al. (2021) explored transformer models for compilation tasks, marking a shift towards leveraging large pre-trained models. Transformers, with their self-attention mechanisms, allowed efficient modeling of long-range dependencies in code. The attention mechanism is expressed as:
+More recently, Armengol-Estapé et al. (2021) explored transformer models for compilation tasks, marking a shift towards leveraging large pre-trained models. Transformers, with their self-attention mechanisms, allowed efficient modeling of long-range dependencies in code. The attention mechanism is expressed in equation \ref{eq:attention}, as shown below:
 \begin{equation}
 \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^\top}{\sqrt{d_k}}\right)V,
+\label{eq:attention}
 \end{equation}
-
 where \( Q \), \( K \), and \( V \) are query, key, and value matrices, and \( d_k \) is the dimensionality of the keys. These models opened new possibilities for tasks like code generation, translation, and repair.
 
 \begin{figure}[h]
@@ -129,7 +122,6 @@ where \( Q \), \( K \), and \( V \) are query, key, and value matrices, and \( d
 \end{figure}
 
 These advancements collectively illustrate the evolution of machine learning techniques for programming tasks. From tree-based models to NMT and transformers, each step has contributed to a deeper understanding of how programs can be represented, translated, and optimized, forming the foundation for the methods explored in this work.
-
 
 
 \section{Proposed Work}
@@ -172,34 +164,34 @@ The process of data preparation is done through several key steps to ensure the 
     \State Save the updated dataset to \texttt{Dataset.csv}
 \EndFor
 \State \textbf{Output:} Updated \texttt{Dataset.csv}
-\end{algorithmic}
+\end{algorithmic}F
 \label{alg:generate-balanced-code}
 \end{algorithm}
 
 Generative AI, for example, Google Gemini-1.5, makes use of advanced large-scale language models trained on multiple datasets to process natural language prompts and generate programmatic code in multiple languages. The technology allows for context-aware mechanisms to be used for accurate and versatile code generation. For data handling, the system uses Pandas, a Python-based data manipulation library to efficiently read, update, and save datasets in structured formats like.csv. It offers concatenation and indexing functionalities that can append newly created outputs including pseudo-code, Python and Java code into the system iteratively. This approach to workflow automation allows more scalability and consistency across different prompts. Moreover, for cross-language compatibility, this model designs its prompts such that they do not rely on the built-in functions that exist in other languages, allowing easy translations across languages.
 
-The self-attention mechanism is a fundamental component of the transformer architecture, computing relative relationships between input tokens according to the following equation:
+The self-attention mechanism is a fundamental component of the transformer architecture, computing relative relationships between input tokens according to the following equation, as shown in equation \ref{eq:self-attention}:
 
 \begin{equation}
 \text{Self-Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^\top}{\sqrt{d}}\right)V.
 \label{eq:self-attention}
 \end{equation}
 
-where \( Q \) (query), \( K \) (key), and \( V \) (value) matrices are derived from input embeddings through learned transformations. The scaling factor \( \sqrt{d} \) stabilizes softmax probabilities, focusing computational resources on the most relevant tokens. Layer normalization further stabilizes model training by normalizing input vectors through the formula:  
+where \( Q \) (query), \( K \) (key), and \( V \) (value) matrices are derived from input embeddings through learned transformations. The scaling factor \( \sqrt{d} \) stabilizes softmax probabilities, focusing computational resources on the most relevant tokens. Layer normalization further stabilizes model training by normalizing input vectors through the formula, as expressed in equation \ref{eq:layer-norm}:
 
 \begin{equation}
 \text{Norm}(x) = \frac{x - \mu}{\sigma + \epsilon}.
 \label{eq:layer-norm}
 \end{equation}
 
-where \( \mu \) is the mean, \( \sigma \) is the standard deviation, and \( \epsilon \) is a small constant for numerical stability. The feedforward layers in transformers enhance the model’s non-linear learning capacity, expressed as:  
+where \( \mu \) is the mean, \( \sigma \) is the standard deviation, and \( \epsilon \) is a small constant for numerical stability. The feedforward layers in transformers enhance the model’s non-linear learning capacity, expressed as shown in equation \ref{eq:ffn}:
 
 \begin{equation}
 \text{FFN}(x) = \text{max}(0, xW_1 + b_1)W_2 + b_2.
 \label{eq:ffn}
 \end{equation}
 
-where \( W_1 \), \( W_2 \) are weight matrices, and \( b_1 \), \( b_2 \) are bias vectors. Lastly, cross-entropy loss optimizes the model by minimizing the error between true labels (\( y_i \)) and predictions (\( \hat{y}_i \)) using:  
+where \( W_1 \), \( W_2 \) are weight matrices, and \( b_1 \), \( b_2 \) are bias vectors. Lastly, cross-entropy loss optimizes the model by minimizing the error between true labels (\( y_i \)) and predictions (\( \hat{y}_i \)) using the formula in equation \ref{eq:cross-entropy}:
 
 \begin{equation}
 L = -\sum_{i=1}^N y_i \log(\hat{y}_i).
@@ -207,6 +199,7 @@ L = -\sum_{i=1}^N y_i \log(\hat{y}_i).
 \end{equation}
 
 These interconnected methodologies ensure the system’s robustness and precision in generating cross-compatible, efficient programmatic solutions.
+
 
 The process begins with feeding a set of text instructions into the Gemini model to generate pseudocode, an abstract, language-agnostic representation of the program's logic. The pseudocode is then fed again into Gemini to produce executable code snippets in both Java and Python. This ensures that the generated code snippets remain independent of specific language attributes or properties, such as Python's \texttt{.reverse()} method. This is done to make the output more versatile and compliant with wider standards of programming; that it is not dependent on specific inbuilt functions or language syntaxes. Through this two-stage process, the method ensures production of modular, efficient, and language-independent code.
 
@@ -231,12 +224,14 @@ The T5 model employs the encoder-decoder Transformer architecture. The encoder p
 \end{figure}
 
 \paragraph{Self-Attention Mechanism}
-The self-attention mechanism computes attention scores to capture relationships between tokens. For a query $Q$, key $K$, and value $V$, the attention mechanism is given by:
+The self-attention mechanism computes attention scores to capture relationships between tokens. For a query \(Q\), key \(K\), and value \(V\), the attention mechanism is given by the formula in equation \ref{eq:attention-mechanism}:
+
 \begin{equation}
 \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V,
 \label{eq:attention-mechanism}
 \end{equation}
-where $d_k$ is the dimensionality of the key vectors.
+where \(d_k\) is the dimensionality of the key vectors.
+
 
 \paragraph{Text-to-Text Framework}
 In T5, every NLP task is cast as a sequence-to-sequence problem. For instance:
@@ -253,12 +248,14 @@ In T5, every NLP task is cast as a sequence-to-sequence problem. For instance:
 \end{figure}
 
 \subsubsection{Pre-training Objective}
-A denoising goal named \textit{span corruption} is used to pre-train the T5 model. This configuration substitutes a unique token for randomly masked text passages. Reconstructing the original text is the aim of the model.  Mathematically, let $\hat{X}$ be the corrupted input and $X$ the original sequence, then the objective is to maximize:
+A denoising goal named \textit{span corruption} is used to pre-train the T5 model. This configuration substitutes a unique token for randomly masked text passages. Reconstructing the original text is the aim of the model. Mathematically, let \( \hat{X} \) be the corrupted input and \( X \) the original sequence, then the objective is to maximize the formula in equation \ref{eq:pretrain-objective}:
+
 \begin{equation}
 \mathcal{L}_{\text{pretrain}} = \sum_{i=1}^n \log P(x_i | \hat{X}, \theta),
 \label{eq:pretrain-objective}
 \end{equation}
-where $\theta$ represents the model parameters.
+where \( \theta \) represents the model parameters.
+
 
 \begin{algorithm}
 \caption{Training and Evaluation of a Code Translation Model}
