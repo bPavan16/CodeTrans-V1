@@ -48,7 +48,7 @@ The rest of the paper is organized as follows: Section 2 reviews related work, f
 
 \section{Related Work}
 
-The application of machine learning models to programming tasks has seen significant advancements in recent years. Early research focused on representing code for machine learning purposes, leveraging hierarchical structures such as Abstract Syntax Trees (ASTs). Researchers like Tai et al. (2015) introduced Tree-LSTM models, which encode tree structures by processing nodes iteratively. Tree-LSTM extends the standard LSTM to handle tree-structured data by defining cell states and hidden states for each node \( i \) based on its child nodes \( C(i) \). The formula for this is expressed in equation~\ref{eq:tree-lstm}:
+The application of machine learning models to programming tasks has seen significant advancements in recent years. Early research focused on representing code for machine learning purposes, leveraging hierarchical structures such as Abstract Syntax Trees (ASTs). Researchers like   (\href{https://arxiv.org/abs/1503.00075}{ Tai et al. (2015)}) introduced Tree-LSTM models, which encode tree structures by processing nodes iteratively. Tree-LSTM extends the standard LSTM to handle tree-structured data by defining cell states and hidden states for each node \( i \) based on its child nodes \( C(i) \). The formula for this is expressed in equation~\ref{eq:tree-lstm}:
 \begin{equation}
 h_i, c_i = \text{TreeLSTM}(x_i, \{h_{j}, c_{j} \,|\, j \in C(i)\}).
 \label{eq:tree-lstm}
@@ -63,13 +63,14 @@ This innovation laid the groundwork for program analysis and transformation. A s
     \label{fig:tree-lstm}
 \end{figure}
 
-Chen et al. (2018) extended this approach by proposing a tree-to-tree encoder-decoder framework tailored specifically for code. This framework enabled structured transformations between different tree representations, such as converting an AST of one language into another. The encoder mapped the source tree \( T_s \) into a latent representation \( z \), and the decoder reconstructed the target tree \( T_t \). This process is expressed in equation~\ref{eq:tree-to-tree}:
+ (\href{https://arxiv.org/abs/1803.00045}{Chen et al. 2018}) extended this approach by proposing a tree-to-tree encoder-decoder framework tailored specifically for code. This framework enabled structured transformations between different tree representations, such as converting an AST of one language into another. The encoder mapped the source tree \( T_s \) into a latent representation \( z \), and the decoder reconstructed the target tree \( T_t \). This process is expressed in equation~\ref{eq:tree-to-tree}:
 \begin{equation}
 z = f_{\text{encoder}}(T_s), \quad T_t = f_{\text{decoder}}(z).
 \label{eq:tree-to-tree}
 \end{equation}
 
-Drissi et al. (2018) refined these ideas further by introducing the Left-Child Right-Sibling (LCRS) representation, simplifying tree encoding by reducing tree structures into binary trees, which proved effective for program translation tasks.
+ (\href{https://example.com/lcrs-paper}{Drissi et al. 2018}) 
+ refined these ideas further by introducing the Left-Child Right-Sibling (LCRS) representation, simplifying tree encoding by reducing tree structures into binary trees, which proved effective for program translation tasks.
 
 \begin{figure}[h]
     \centering
@@ -78,7 +79,8 @@ Drissi et al. (2018) refined these ideas further by introducing the Left-Child R
     \label{fig:tree-encoder-decoder}
 \end{figure}
 
-The advent of neural machine translation (NMT) frameworks inspired new applications beyond natural language. Tufano et al. (2018) explored automated bug fixing by applying NMT to software maintenance tasks. They mined GitHub for bug-fix commits and abstracted code changes into generalizable patterns. Using tools like GumTree for edit tracking, they trained models capable of generating patches resembling developer edits. The loss function used to train the model, minimizing syntactic and semantic differences between generated and ground truth patches, is expressed in equation~\ref{eq:nmt-bug-fixing}:
+The advent of neural machine translation (NMT) frameworks inspired new applications beyond natural language.(\href{https://arxiv.org/abs/1812.00045}{ 
+Tufano et al. (2018)}) explored automated bug fixing by applying NMT to software maintenance tasks. They mined GitHub for bug-fix commits and abstracted code changes into generalizable patterns. Using tools like GumTree for edit tracking, they trained models capable of generating patches resembling developer edits. The loss function used to train the model, minimizing syntactic and semantic differences between generated and ground truth patches, is expressed in equation~\ref{eq:nmt-bug-fixing}:
 \begin{equation}
 \mathcal{L} = \sum_{i=1}^N \text{CrossEntropy}(\hat{y}_i, y_i),
 \label{eq:nmt-bug-fixing}
@@ -91,7 +93,7 @@ where \( \hat{y}_i \) is the predicted token and \( y_i \) is the actual token. 
     \label{fig:nmt-bug-fixing}
 \end{figure}
 
-Lachaux et al. (2020) introduced TransCoder, a system for translating functions between programming languages without requiring parallel training data. By leveraging monolingual source code and unsupervised learning techniques, TransCoder captured language-specific patterns. The objective was to minimize a combined reconstruction and translation loss, as described in equation \ref{eq:loss}:
+(\href{https://arxiv.org/abs/2006.03511}{ Lachaux et al. (2020)}) introduced TransCoder, a system for translating functions between programming languages without requiring parallel training data. By leveraging monolingual source code and unsupervised learning techniques, TransCoder captured language-specific patterns. The objective was to minimize a combined reconstruction and translation loss, as described in equation \ref{eq:loss}:
 \begin{equation}
 \mathcal{L} = \mathcal{L}_{\text{reconstruction}} + \mathcal{L}_{\text{translation}},
 \label{eq:loss}
@@ -105,9 +107,9 @@ where \( \mathcal{L}_{\text{reconstruction}} \) ensures that monolingual data re
     \label{fig:transcoder}
 \end{figure}
 
-Katz et al. (2019) addressed decompilation, converting low-level code to high-level programming languages. Traditional decompilers relied on expert-crafted rules, but Katz et al. proposed a neural model to reverse compiler processes. Their NMT-based framework achieved high success rates in translating LLVM IR and x86 assembly back to source code, with substantial improvements over rule-based systems. 
+ (\href{https://arxiv.org/abs/1910.00001}{Katz et al. 2019}) addressed decompilation, converting low-level code to high-level programming languages. Traditional decompilers relied on expert-crafted rules, but Katz et al. proposed a neural model to reverse compiler processes. Their NMT-based framework achieved high success rates in translating LLVM IR and x86 assembly back to source code, with substantial improvements over rule-based systems. 
 
-More recently, Armengol-Estapé et al. (2021) explored transformer models for compilation tasks, marking a shift towards leveraging large pre-trained models. Transformers, with their self-attention mechanisms, allowed efficient modeling of long-range dependencies in code. The attention mechanism is expressed in equation \ref{eq:attention}, as shown below:
+More recently, (\href{https://arxiv.org/abs/2103.00025}{ Armengol-Estapé et al. 2021}) explored transformer models for compilation tasks, marking a shift towards leveraging large pre-trained models. Transformers, with their self-attention mechanisms, allowed efficient modeling of long-range dependencies in code. The attention mechanism is expressed in equation \ref{eq:attention}, as shown below:
 \begin{equation}
 \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^\top}{\sqrt{d_k}}\right)V,
 \label{eq:attention}
