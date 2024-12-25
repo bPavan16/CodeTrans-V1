@@ -54,12 +54,7 @@ h_i, c_i = \text{TreeLSTM}(x_i, \{h_{j}, c_{j} \,|\, j \in C(i)\}).
 
 This innovation laid the groundwork for program analysis and transformation. A schematic representation of the Tree-LSTM architecture can be illustrated in Figure~\ref{fig:tree-lstm}.
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.8\textwidth]{Images/1.png} % Replace with actual Tree-LSTM flowchart
-    \caption{Tree-LSTM Architecture for AST Processing}
-    \label{fig:tree-lstm}
-\end{figure}
+
 
 Chen et al. \cite{chen2018} extended this approach by proposing a tree-to-tree encoder-decoder framework tailored specifically for code. This framework enabled structured transformations between different tree representations, such as converting an AST of one language into another. The encoder mapped the source tree \( T_s \) into a latent representation \( z \), and the decoder reconstructed the target tree \( T_t \). This process is expressed in equation~\ref{eq:tree-to-tree}:
 \begin{equation}
@@ -69,12 +64,6 @@ z = f_{\text{encoder}}(T_s), \quad T_t = f_{\text{decoder}}(z).
 
 Drissi et al. (2018)\cite{drissi2018} refined these ideas further by introducing the Left-Child Right-Sibling (LCRS) representation, simplifying tree encoding by reducing tree structures into binary trees, which proved effective for program translation tasks.
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.8\textwidth]{Images/2.png} % Replace with actual flowchart for tree-to-tree model
-    \caption{Tree-to-Tree Encoder-Decoder Framework for Code Transformation}
-    \label{fig:tree-encoder-decoder}
-\end{figure}
 
 The advent of neural machine translation (NMT) frameworks inspired new applications beyond natural language. Tufano et al. (2018) \cite{tufano2018} explored automated bug fixing by applying NMT to software maintenance tasks. They mined GitHub for bug-fix commits and abstracted code changes into generalizable patterns. Using tools like GumTree for edit tracking, they trained models capable of generating patches resembling developer edits. The loss function used to train the model, minimizing syntactic and semantic differences between generated and ground truth patches, is expressed in equation~\ref{eq:nmt-bug-fixing}:
 \begin{equation}
@@ -97,11 +86,7 @@ Lachaux et al. (2020) \cite{lachaux2020} introduced TransCoder, a system for tra
 where \( \mathcal{L}_{\text{reconstruction}} \) ensures that monolingual data reconstructs correctly, and \( \mathcal{L}_{\text{translation}} \) aligns the latent spaces of source and target languages. TransCoder outperformed rule-based systems, showcasing robust language-agnostic representations.
 
 \begin{figure}[h]
-    \centering
-    \includegraphics[width=0.8\textwidth]{Images/4.jpg}
-    \caption{TransCoder Framework for Unsupervised Code Translation}
-    \label{fig:transcoder}
-\end{figure}
+
 
 Katz et al. (2019) \cite{katz2019}addressed decompilation, converting low-level code to high-level programming languages. Traditional decompilers relied on expert-crafted rules, but Katz et al. proposed a neural model to reverse compiler processes. Their NMT-based framework achieved high success rates in translating LLVM IR and x86 assembly back to source code, with substantial improvements over rule-based systems. 
 
@@ -112,12 +97,7 @@ More recently, Armengol-Estapé et al. (2021) \cite{armengol2021} explored trans
 \end{equation}
 where \( Q \), \( K \), and \( V \) are query, key, and value matrices, and \( d_k \) is the dimensionality of the keys. These models opened new possibilities for tasks like code generation, translation, and repair.
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=0.8\textwidth]{Images/5.png} % Replace with transformer-based model diagram
-    \caption{Transformer Model for Compilation Tasks}
-    \label{fig:transformer-code}
-\end{figure}
+
 
 These advancements collectively illustrate the evolution of machine learning techniques for programming tasks. From tree-based models to NMT and transformers, each step has contributed to a deeper understanding of how programs can be represented, translated, and optimized, forming the foundation for the methods explored in this work.
 
