@@ -215,9 +215,9 @@ One of the main challenges during implementation was that there was an imbalance
 The T5 model employs the encoder-decoder Transformer architecture. The encoder processes the input sequence $X = \{x_1, x_2, \dots, x_n\}$, while the decoder generates the output sequence $Y = \{y_1, y_2, \dots, y_m\}$. Both components leverage self-attention and feedforward layers.
 
 \begin{figure}[h]
-\caption{Encoder-Decoder Architecture}
 \centering
 \includegraphics[width=1\textwidth]{Images/T5-architecture.png}
+\caption{Encoder-Decoder Architecture}
 \label{fig:encoder-decoder-architecture}
 \end{figure}
 
@@ -239,9 +239,9 @@ In T5, every NLP task is cast as a sequence-to-sequence problem. For instance:
 \end{itemize}
 
 \begin{figure}[h]
-\caption{ T5 (Text-To-Text Transfer Transformer) model}
 \centering
 \includegraphics[width=1\textwidth]{Images/T5.png}
+\caption{T5 (Text-To-Text Transfer Transformer) model}
 \label{fig:t5-model}
 \end{figure}
 
@@ -308,6 +308,8 @@ The T5 model is a flexible tool for language production and interpretation becau
 
 \begin{table}[h!]
 \centering
+\caption{Sample code snippets in a table} % Caption at the top
+\label{tab:code-snippets}
 \adjustbox{max width=\textwidth}{ % Scale table to fit within page width
 \small % Reduce font size for the whole table
 \begin{tabular}{|c|c|c|}
@@ -354,7 +356,6 @@ def max_prefix_sum(A, B):
 \end{minipage}
 \\
 \hline
-% Additional rows can be added here
 \begin{minipage}[t]{0.3\textwidth}
 \begin{lstlisting}[basicstyle=\ttfamily\scriptsize, breaklines=true]
 Ways to remove one element from a binary string so that XOR becomes zero |
@@ -401,14 +402,14 @@ def count_ways(s):
 \hline
 \end{tabular}
 }
-\caption{Sample code snippets in a table}
-\label{tab:code-snippets}
 \end{table}
 
 The dataset, shown in Table \ref{tab:code-snippets}, serves as a fundamental resource for training and evaluating the T5-based model. It contains various examples of pseudocode, Java, and Python code snippets used for translation tasks.
 
 \begin{table}[h!]
 \centering
+\caption{Performance of T5 model on benchmark dataset.} % Caption at the top
+\label{tab:bleu_results}
 \begin{tabular}{|c|c|c|}
 \hline
 \textbf{Model} & \textbf{Metric} & \textbf{Score}\\
@@ -416,14 +417,15 @@ The dataset, shown in Table \ref{tab:code-snippets}, serves as a fundamental res
 T5-small & BLEU & 42 \\
 \hline
 \end{tabular}
-\caption{Performance of T5 model on benchmark dataset.}
-\label{tab:bleu_results}
 \end{table}
 
 The BLEU score for the T5 model, as presented in Table \ref{tab:bleu_results}, indicates that the model performs reasonably well in translating code from Java to Python, but there is still room for improvement.
 
 \begin{table}[h!]
 \centering
+
+\caption{Java to Python Code Snippets}
+\label{table:code_snippets_java_python}
 \adjustbox{max width=\textwidth}{ % Scale table to fit within page width
 \small % Reduce font size for the whole table
 \begin{tabular}{|c|c|}
@@ -449,8 +451,6 @@ return sum(a, b)
 \hline
 \end{tabular}
 }
-\caption{Java to Python Code Snippets}
-\label{table:code_snippets_java_python}
 \end{table}
 
 Table \ref{table:code_snippets_java_python} demonstrates some simple Java to Python code translations, highlighting the syntax similarities and differences between the two languages.
