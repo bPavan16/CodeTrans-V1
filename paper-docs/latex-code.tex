@@ -78,7 +78,7 @@ Drissi et al. (2018)\cite{drissi2018} refined these ideas further by introducing
     \label{fig:tree-encoder-decoder}
 \end{figure}
 
-The advent of neural machine translation (NMT) frameworks inspired new applications beyond natural language. Tufano et al. (2018) \cite{Tufano2018} explored automated bug fixing by applying NMT to software maintenance tasks. They mined GitHub for bug-fix commits and abstracted code changes into generalizable patterns. Using tools like GumTree for edit tracking, they trained models capable of generating patches resembling developer edits. The loss function used to train the model, minimizing syntactic and semantic differences between generated and ground truth patches, is expressed in equation~\ref{eq:nmt-bug-fixing}:
+The advent of neural machine translation (NMT) frameworks inspired new applications beyond natural language. Tufano et al. (2018) \cite{tufano2018} explored automated bug fixing by applying NMT to software maintenance tasks. They mined GitHub for bug-fix commits and abstracted code changes into generalizable patterns. Using tools like GumTree for edit tracking, they trained models capable of generating patches resembling developer edits. The loss function used to train the model, minimizing syntactic and semantic differences between generated and ground truth patches, is expressed in equation~\ref{eq:nmt-bug-fixing}:
 \begin{equation}
 \mathcal{L} = \sum_{i=1}^N \text{CrossEntropy}(\hat{y}_i, y_i),
 \label{eq:nmt-bug-fixing}
@@ -91,7 +91,7 @@ where \( \hat{y}_i \) is the predicted token and \( y_i \) is the actual token. 
     \label{fig:nmt-bug-fixing}
 \end{figure}
 
-Lachaux et al. (2020) \cite{Lachaux2018} introduced TransCoder, a system for translating functions between programming languages without requiring parallel training data. By leveraging monolingual source code and unsupervised learning techniques, TransCoder captured language-specific patterns. The objective was to minimize a combined reconstruction and translation loss, as described in equation \ref{eq:loss}:
+Lachaux et al. (2020) \cite{lachaux2020} introduced TransCoder, a system for translating functions between programming languages without requiring parallel training data. By leveraging monolingual source code and unsupervised learning techniques, TransCoder captured language-specific patterns. The objective was to minimize a combined reconstruction and translation loss, as described in equation \ref{eq:loss}:
 \begin{equation}
 \mathcal{L} = \mathcal{L}_{\text{reconstruction}} + \mathcal{L}_{\text{translation}},
 \label{eq:loss}
@@ -105,7 +105,7 @@ where \( \mathcal{L}_{\text{reconstruction}} \) ensures that monolingual data re
     \label{fig:transcoder}
 \end{figure}
 
-Katz et al. (2019) \cite{Katz2018}addressed decompilation, converting low-level code to high-level programming languages. Traditional decompilers relied on expert-crafted rules, but Katz et al. proposed a neural model to reverse compiler processes. Their NMT-based framework achieved high success rates in translating LLVM IR and x86 assembly back to source code, with substantial improvements over rule-based systems. 
+Katz et al. (2019) \cite{katz2019}addressed decompilation, converting low-level code to high-level programming languages. Traditional decompilers relied on expert-crafted rules, but Katz et al. proposed a neural model to reverse compiler processes. Their NMT-based framework achieved high success rates in translating LLVM IR and x86 assembly back to source code, with substantial improvements over rule-based systems. 
 
 More recently, Armengol-Estapé et al. (2021) \cite{armengol2021} explored transformer models for compilation tasks, marking a shift towards leveraging large pre-trained models. Transformers, with their self-attention mechanisms, allowed efficient modeling of long-range dependencies in code. The attention mechanism is expressed in equation \ref{eq:attention}, as shown below:
 \begin{equation}
@@ -481,53 +481,30 @@ Future research could explore the following directions:
 %% TEMPLATE ONLY, WILL NEED TO ADD PROPER REFERENCES LATER ITS 3 AM FOR GOD'S SAKE
 \begin{thebibliography}{99}
 
-\bibitem{smith2020} 
-Smith, J. A. (2020). \textit{Cybersecurity in the modern world}. TechPress. \href{https://www.techpress.com/cybersecurity}{Link}
-
-\bibitem{brown2021} 
-Brown, L. M., \& Green, P. (2021). The impact of artificial intelligence on cybersecurity defense strategies. \textit{Journal of Cybersecurity Research, 34}(2), 123-135. \href{https://doi.org/10.1016/j.jcsr.2020.11.003}{https://doi.org/10.1016/j.jcsr.2020.11.003}
-
-\bibitem{nist2018} 
-National Institute of Standards and Technology. (2018). \textit{Framework for improving critical infrastructure cybersecurity}. \href{https://www.nist.gov/cyberframework}{https://www.nist.gov/cyberframework}
-
-\bibitem{clark2019} 
-Clark, A. B., \& Davis, R. M. (2019). A review of emerging threats in cloud computing environments. In \textit{Proceedings of the International Conference on Cloud Security} (pp. 45-52). IEEE. \href{https://doi.org/10.1109/ICCS.2019.00014}{https://doi.org/10.1109/ICCS.2019.00014}
-
-\bibitem{dhs2017} 
-U.S. Department of Homeland Security. (2017). \textit{Cybersecurity: A comprehensive strategy for the future} (Publication No. DHS-17-093). \href{https://www.dhs.gov/cybersecurity-strategy}{https://www.dhs.gov/cybersecurity-strategy}
-
-\bibitem{thompson2022} 
-Thompson, R. E. (2022). \textit{The evolution of encryption standards and their impact on data protection} (Master’s thesis). University of California, Berkeley. \href{https://doi.org/10.1234/ucbthesis.2022}{https://doi.org/10.1234/ucbthesis.2022}
-
-
-
-
 \bibitem{tai2015}
-Tai, K., Socher, R., & Manning, C. D. (2015). "Improved Semantic Representations From Tree-Structured Long Short-Term Memory Networks." \textit{Proceedings of the 53rd Annual Meeting of the Association for Computational Linguistics (ACL 2015)}. \href{https://arxiv.org/abs/1503.00068}{Link}
+Tai, K., Socher, R., Manning, C. D. (2015). "Improved Semantic Representations From Tree-Structured Long Short-Term Memory Networks." \href{https://arxiv.org/abs/1503.00075}{https://arxiv.org/abs/1503.00075}
 
 \bibitem{chen2018}
-Chen, D., Zhang, X., & Zhao, H. (2018). "Tree-to-Tree Neural Networks for Code Transformation." \textit{Proceedings of the 2018 Conference on Empirical Methods in Natural Language Processing (EMNLP 2018)}. \href{https://arxiv.org/abs/1803.00045}{Link}
+Chen, D., Zhang, X., Zhao, H. (2018). "Tree-to-Tree Neural Networks for Code Transformation." \href{https://arxiv.org/abs/1802.03691}{https://arxiv.org/abs/1802.03691}   
+
 
 \bibitem{drissi2018}
-Drissi, Y., Boudjelida, Z., & El Kourdi, M. (2018). "LCRS: A Novel Representation for Efficient Tree Encoding in Code Translation Tasks." \textit{Proceedings of the 2018 International Conference on Artificial Intelligence (ICAI 2018)}.
+Drissi, Y., Boudjelida, Z., El Kourdi, M. (2018). "Program Language Translation Using a Grammar-Driven Tree-to-Tree Model" \href{https://arxiv.org/abs/1807.01784}{https://arxiv.org/abs/1807.01784}
 
 \bibitem{tufano2018}
-Tufano, M., Di Penta, M., & Oliveto, R. (2018). "Automated Bug Fixing: A Neural Machine Translation Approach." \textit{Proceedings of the 40th International Conference on Software Engineering (ICSE 2018)}. \href{https://arxiv.org/abs/1812.00045}{Link}
+Michele Tufano, Cody Watson, Gabriele Bavota, Massimiliano Di Penta, Martin White, Denys Poshyvanyk (2018). "An Empirical Study on Learning Bug-Fixing Patches in the Wild via Neural Machine Translation"  \href{https://arxiv.org/abs/1812.08693}{https://arxiv.org/abs/1812.08693}
 
 \bibitem{lachaux2020}
-Lachaux, M., Lample, G., & Ruder, S. (2020). "TransCoder: A Neural Model for Unsupervised Code Translation." \textit{Proceedings of the 58th Annual Meeting of the Association for Computational Linguistics (ACL 2020)}. \href{https://arxiv.org/abs/2006.03511}{Link}
+Lachaux, M., Lample, G., Ruder, S. (2020). "TransCoder: A Neural Model for Unsupervised Code Translation."\href{https://arxiv.org/abs/2006.03511}{https://arxiv.org/abs/2006.03511}
 
 \bibitem{katz2019}
-Katz, G., & Matuszek, C. (2019). "Neural Decompilation: A Deep Learning Approach to Reverse Engineering." \textit{Proceedings of the 41st International Conference on Software Engineering (ICSE 2019)}.
-
-\bibitem{armengol2021}
-Armengol-Estapé, J., Gonzalez, P., & Stojanovic, J. (2021). "Transformer Models for Compilation Tasks." \textit{Proceedings of the 2021 Conference on Programming Language Design and Implementation (PLDI 2021)}. \href{https://arxiv.org/abs/2103.00025}{Link}
+Katz, G., Matuszek, C. (2019). "Towards Neural Decompilation." 
+\href{https://arxiv.org/abs/1905.08325}{https://arxiv.org/abs/1905.08325}
 
 
 \end{thebibliography}
 
 
-\end{thebibliography}
 
 
 \end{document}
