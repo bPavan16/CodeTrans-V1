@@ -31,6 +31,14 @@ Using T5-Small}
 \begin{document}
 
 \maketitle
+\begin{abstract}
+    \noindent {This paper presents an innovative approach to code-to-code translation from Java to Python using the T5-small transformer model, trained on a novel custom-generated dataset. Unlike prior works that often rely on language-specific libraries or attributes, our dataset avoids inbuilt functionalities to emphasize algorithmically pure and fully translatable code. The dataset creation pipeline leverages the Gemini model, which first generates pseudocode from sample text before encoding it into equivalent Java and Python implementations devoid of language-specific optimizations. Using this dataset, we trained the T5-small model to identify and generalize patterns in code translation. The evaluation demonstrates that our method produces semantically equivalent and syntactically valid translations, achieving a BLEU score of 42. These results underscore the potential of transformer models in enabling accurate, tool-assisted cross-language code translation, offering valuable applications for software development, maintenance, and multilingual programming education.
+}
+\end{abstract}
+
+\begin{keywords}
+    {Transpilation, Encoder-Decoder Architecture, Multilingual Code Translation, Custom Dataset Generation, Pseudocode-Based Training, Gemini API, Cross-Language Programming}
+\end{keywords}
 
 \section{Introduction}
 
@@ -511,7 +519,5 @@ Kyle Aitken, Vinay V Ramasesh, Yuan Cao, Niru Maheswaranathan (2021) "Understand
 Mike Lewis, Yinhan Liu, Naman Goyal, Marjan Ghazvininejad, Abdelrahman Mohamed, Omer Levy, Ves Stoyanov, Luke Zettlemoyer (2019). "BART: Denoising Sequence-to-Sequence Pre-training for Natural Language Generation, Translation, and Comprehension" \href{https://arxiv.org/abs/1910.13461}{https://arxiv.org/abs/1910.13461}
 
 \end{thebibliography}
-
-
 
 \end{document}
