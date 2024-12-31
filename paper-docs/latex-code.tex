@@ -141,7 +141,7 @@ The data preparation methodology involves a series of systematic steps designed 
 
 \subsubsection{Algorithms}
 
-The process of data preparation is done through several key steps to ensure the quality of the generated data as being both balanced and effective. We \textbf{integrate the Gemini API}, which creates structured API calls that transform pseudocode into corresponding code snippets, starting with Java and Python code generation from pseudocode instructions. Next, we \textbf{balance the data} so that we have equal numbers of pairs of Java and Python code by keeping the dataset fair to allow for cross-language training. Last but not least, we implement a 4-second delay between requests in order not to hit \textbf{API rate limits}. That's essential to avoid hitting any breaks during the process. These steps combined result in a dataset that is reliable, well-rounded, and ready for further use.
+The process of data preparation is done through several key steps to ensure the quality of the generated data as being both balanced and effective. We \textit{integrate the Gemini API}, which creates structured API calls that transform pseudocode into corresponding code snippets, starting with Java and Python code generation from pseudocode instructions. Next, we \textit{balance the data} so that we have equal numbers of pairs of Java and Python code by keeping the dataset fair to allow for cross-language training. Last but not least, we implement a 4-second delay between requests in order not to hit \textit{API rate limits}. That's essential to avoid hitting any breaks during the process. These steps combined result in a dataset that is reliable, well-rounded, and ready for further use.
 
 \begin{algorithm}
 \caption{Generate Balanced Code Pairs from Text Input}
@@ -445,7 +445,7 @@ return sum(a, b)
 
 Table \ref{table:code_snippets_java_python} demonstrates some simple Java to Python code translations, highlighting the syntax similarities and differences between the two languages.
 
-\paragraph{Key Advantage} 
+\textit{Key Advantage} 
 The framework offers several notable advantages. First, it ensures high-quality translations, leveraging the capabilities of the Gemini API to deliver accurate and reliable outputs. Additionally, it is designed for scalability, allowing seamless extension to support other programming languages as needed. Furthermore, the framework accommodates both semantic and syntactic variability, making it versatile and effective for diverse use cases in code transpilation.
 
 
