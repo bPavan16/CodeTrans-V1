@@ -73,7 +73,7 @@ The introduction of transformer architectures has revolutionized various NLP tas
 
 \cite{xiyu2024} explored the application of transformer models in compilation tasks, leveraging self-attention to efficiently model long-range dependencies in code. Their work demonstrated the versatility of transformers in tasks such as code generation, translation, and repair, setting the stage for more specialized applications in software engineering.
 
-In the realm of large pre-trained models, \cite{pan2023} introduced \textit{SteloCoder}, a decoder-only Large Language Model (LLM) based on StarCoder, specifically tailored for multi-language-to-Python translation. By incorporating a Mixture-of-Experts (MoE) architecture and fine-tuning via the Low-Rank Adaptive Method (LoRA), SteloCoder achieved remarkable efficiency with minimal parameter overhead. Utilizing curriculum learning and self-instructed data, SteloCoder set new benchmarks on the XLCoST dataset, attaining an average CodeBLEU score of 73.76 with only 45M additional parameters and 32 hours of training.
+In the realm of large pre-trained models, \cite{pan2023} introduced \textit{SteloCoder}, a decoder-only Large Language Model (LLM) based on StarCoder \cite{li2023starcodersourceyou}, specifically tailored for multi-language-to-Python translation. By incorporating a Mixture-of-Experts (MoE) \cite{shazeer2017outrageouslylargeneuralnetworks} architecture and fine-tuning via the Low-Rank Adaptive Method (LoRA) \cite{hu2021loralowrankadaptationlarge}, SteloCoder achieved remarkable efficiency with minimal parameter overhead. Utilizing curriculum learning and self-instructed data, SteloCoder set new benchmarks on the XLCoST dataset \cite{xlcost2022}, attaining an average CodeBLEU score of 73.76 with only 45M additional parameters and 32 hours of training.
 
 \subsection{The T5 Model and Its Applications in Code Translation}
 
@@ -91,7 +91,7 @@ The Text-to-Text Transfer Transformer (T5) model, introduced by \cite{kyle2021},
 
 T5's encoder-decoder architecture is adept at handling sequence-to-sequence tasks. The encoder processes the input sequence, generating a context-aware latent representation, while the decoder generates the output sequence based on this representation. This architecture allows T5 to maintain contextual integrity and capture the syntactic and semantic nuances essential for accurate code translation.
 
-Pretrained on the Colossal Clean Crawled Corpus (C4), T5 benefits from extensive language understanding, which can be fine-tuned for domain-specific tasks like code translation. The model employs advanced subword tokenization techniques, such as SentencePiece, enabling it to handle diverse programming languages and out-of-vocabulary tokens effectively.
+Pretrained on the Colossal Clean Crawled Corpus (C4) \cite{t52019}, T5 benefits from extensive language understanding, which can be fine-tuned for domain-specific tasks like code translation. The model employs advanced subword tokenization techniques, such as SentencePiece, enabling it to handle diverse programming languages and out-of-vocabulary tokens effectively.
 
 \begin{figure}[h]
 \centering
@@ -105,7 +105,7 @@ The T5 model employs the encoder-decoder Transformer architecture \cite{kyle2021
 
 
 \paragraph{Self-Attention Mechanism}
-The self-attention mechanism computes attention scores to capture relationships between tokens. For a query \(Q\), key \(K\), and value \(V\), the attention mechanism is given by the formula in equation \ref{eq:attention-mechanism}:
+The self-attention mechanism \cite{cheng2016longshorttermmemorynetworksmachine} computes attention scores to capture relationships between tokens. For a query \(Q\), key \(K\), and value \(V\), the attention mechanism is given by the formula in equation \ref{eq:attention-mechanism}:
 
 \begin{equation}
 \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V,
@@ -141,7 +141,7 @@ The data preparation methodology involves a series of systematic steps designed 
 
 \subsubsection{Algorithms}
 
-The process of data preparation is done through several key steps to ensure the quality of the generated data as being both balanced and effective. We \textit{integrate the Gemini API}, which creates structured API calls that transform pseudocode into corresponding code snippets, starting with Java and Python code generation from pseudocode instructions. Next, we \textit{balance the data} so that we have equal numbers of pairs of Java and Python code by keeping the dataset fair to allow for cross-language training. Last but not least, we implement a 4-second delay between requests in order not to hit \textit{API rate limits}. That's essential to avoid hitting any breaks during the process. These steps combined result in a dataset that is reliable, well-rounded, and ready for further use.
+The process of data preparation is done through several key steps to ensure the quality of the generated data as being both balanced and effective. We \textbf{integrate the Gemini API}, which creates structured API calls that transform pseudocode into corresponding code snippets, starting with Java and Python code generation from pseudocode instructions. Next, we \textbf{balance the data} so that we have equal numbers of pairs of Java and Python code by keeping the dataset fair to allow for cross-language training. Last but not least, we implement a 4-second delay between requests in order not to hit \textbf{API rate limits}. That's essential to avoid hitting any breaks during the process. These steps combined result in a dataset that is reliable, well-rounded, and ready for further use.
 
 \begin{algorithm}
 \caption{Generate Balanced Code Pairs from Text Input}
@@ -205,35 +205,6 @@ The process begins with feeding a set of text instructions into the Gemini model
 
 
 One of the main challenges during implementation was that there was an imbalance between the pseudocode instructions and significant differences in syntax and semantics between Java and Python. The approach to this was a balanced dataset, where the number of Java and Python snippets were equal to each other for consistency and compatibility. The other challenge was that API rate limits could break up iterative workflows. This problem was solved by incorporating a delay mechanism between API calls, thus making sure the system respects rate constraints while executing uninterruptedly.
-\subsubsection{Model Architecture}
-The T5 model employs the encoder-decoder Transformer architecture \cite{kyle2021}. The encoder processes the input sequence $X = \{x_1, x_2, \dots, x_n\}$, while the decoder generates the output sequence $Y = \{y_1, y_2, \dots, y_m\}$. Both components leverage self-attention and feedforward layers.
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=1\textwidth]{Images/T5-architecture.png}
-\caption{Encoder-Decoder Architecture}
-\label{fig:encoder-decoder-architecture}
-\end{figure}
-
-\paragraph{Self-Attention Mechanism}
-The self-attention mechanism computes attention scores to capture relationships between tokens. For a query \(Q\), key \(K\), and value \(V\), the attention mechanism is given by the formula in equation \ref{eq:attention-mechanism}:
-
-\begin{equation}
-\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V,
-\label{eq:attention-mechanism}
-\end{equation}
-where \(d_k\) is the dimensionality of the key vectors.
-
-
-\paragraph{Text-to-Text Framework}
-In T5, every NLP task is framed as a sequence-to-sequence problem. For example, in sentiment analysis, the input might be \texttt{"classify sentiment: The movie was great."} and the output would be \texttt{"positive"}. Similarly, in machine translation, the input could be \texttt{"translate English to German: Hello"}, with the output being \texttt{"Hallo"}.
-
-\begin{figure}[h]
-\centering
-\includegraphics[width=1\textwidth]{Images/T5.png}
-\caption{T5 (Text-To-Text Transfer Transformer) model}
-\label{fig:t5-model}
-\end{figure}
 
 \subsubsection{Pre-training Objective}
 A denoising goal named \textit{span corruption} is used to pre-train the T5 model. This configuration substitutes a unique token for randomly masked text passages. Reconstructing the original text is the aim of the model. Mathematically, let \( \hat{X} \) be the corrupted input and \( X \) the original sequence, then the objective is to maximize the formula in equation \ref{eq:pretrain-objective}:
@@ -445,7 +416,7 @@ return sum(a, b)
 
 Table \ref{table:code_snippets_java_python} demonstrates some simple Java to Python code translations, highlighting the syntax similarities and differences between the two languages.
 
-\textit{Key Advantage} 
+\paragraph{Key Advantage} 
 The framework offers several notable advantages. First, it ensures high-quality translations, leveraging the capabilities of the Gemini API to deliver accurate and reliable outputs. Additionally, it is designed for scalability, allowing seamless extension to support other programming languages as needed. Furthermore, the framework accommodates both semantic and syntactic variability, making it versatile and effective for diverse use cases in code transpilation.
 
 
