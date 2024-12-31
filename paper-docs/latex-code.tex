@@ -54,61 +54,66 @@ The rest of the paper is organized as follows: Section 2 reviews related work, f
 
 
 \section{Related Work}
+\section{Related Work}
 
-The application of machine learning models to programming tasks has seen significant advancements in recent years. Early research focused on representing code for machine learning purposes, leveraging hierarchical structures such as Abstract Syntax Trees (ASTs). Researchers like Tai et al. (2015) \cite{tai2015} introduced Tree-LSTM models, which encode tree structures by processing nodes iteratively. Tree-LSTM extends the standard LSTM to handle tree-structured data by defining cell states and hidden states for each node \( i \) based on its child nodes \( C(i) \). The formula for this is expressed in equation~\ref{eq:tree-lstm}:
-\begin{equation}
-h_i, c_i = \text{TreeLSTM}(x_i, \{h_{j}, c_{j} \,|\, j \in C(i)\}).
-\label{eq:tree-lstm}
-\end{equation}
+The integration of machine learning models into programming tasks has witnessed substantial advancements, particularly with the advent of transformer-based architectures. This section reviews the pivotal works in neural machine translation (NMT) for code, the evolution of transformer models with a focus on the T5 (Text-to-Text Transfer Transformer) model, and recent innovations that align closely with our approach.
 
-This innovation laid the groundwork for program analysis and transformation. A schematic representation of the Tree-LSTM architecture can be illustrated in Figure~\ref{fig:tree-lstm}.
+\subsection{Neural Machine Translation for Code}
 
+Neural Machine Translation (NMT) has been instrumental in automating the translation of programming languages, facilitating code migration, and enhancing cross-language interoperability. Early approaches leveraged statistical methods; however, the field has progressively shifted towards neural architectures that better capture the syntactic and semantic nuances of programming languages.
 
+\cite{tufano2018} pioneered the application of NMT for automated bug fixing. By mining GitHub repositories for bug-fix commits and abstracting code changes into generalizable patterns, their model effectively generated patches that mirrored developer edits. This approach underscored the potential of NMT in learning AST-level transformations, achieving high syntactic correctness.
 
-\cite{chen2018} extended this approach by proposing a tree-to-tree encoder-decoder framework tailored specifically for code. This framework enabled structured transformations between different tree representations, such as converting an AST of one language into another. The encoder mapped the source tree \( T_s \) into a latent representation \( z \), and the decoder reconstructed the target tree \( T_t \). This process is expressed in equation~\ref{eq:tree-to-tree}:
-\begin{equation}
-z = f_{\text{encoder}}(T_s), \quad T_t = f_{\text{decoder}}(z).
-\label{eq:tree-to-tree}
-\end{equation}
+Building on this foundation, \cite{lachaux2020} introduced \textit{TransCoder}, a system capable of translating functions between programming languages without relying on parallel training data. Utilizing unsupervised learning techniques, TransCoder effectively captured language-specific patterns, outperforming traditional rule-based systems and demonstrating robust language-agnostic representations.
 
-\cite{drissi2018} refined these ideas further by introducing the Left-Child Right-Sibling (LCRS) representation, simplifying tree encoding by reducing tree structures into binary trees, which proved effective for program translation tasks.
+Similarly, \cite{katz2019} addressed the decompilation challenge by employing NMT-based frameworks to convert low-level code, such as LLVM IR and x86 assembly, back to high-level programming languages. Their neural model surpassed rule-based decompilers, highlighting the efficacy of NMT in reversing compiler processes.
 
+\subsection{Transformer-Based Models for Code Translation}
 
-The advent of neural machine translation (NMT) frameworks inspired new applications beyond natural language. \cite{tufano2018} explored automated bug fixing by applying NMT to software maintenance tasks. They mined GitHub for bug-fix commits and abstracted code changes into generalizable patterns. Using tools like GumTree for edit tracking, they trained models capable of generating patches resembling developer edits. The loss function used to train the model, minimizing syntactic and semantic differences between generated and ground truth patches, is expressed in equation~\ref{eq:nmt-bug-fixing}:
-\begin{equation}
-\mathcal{L} = \sum_{i=1}^N \text{CrossEntropy}(\hat{y}_i, y_i),
-\label{eq:nmt-bug-fixing}
-\end{equation}
-where \( \hat{y}_i \) is the predicted token and \( y_i \) is the actual token. Their approach achieved high syntactic correctness and underscored the utility of NMT in learning transformations at the AST level.
+The introduction of transformer architectures has revolutionized various NLP tasks, including code translation. Transformers, with their self-attention mechanisms, excel at modeling long-range dependencies and capturing intricate relationships within data sequences, making them ideal for handling the complexity of programming languages.
+
+\cite{xiyu2024} explored the application of transformer models in compilation tasks, leveraging self-attention to efficiently model long-range dependencies in code. Their work demonstrated the versatility of transformers in tasks such as code generation, translation, and repair, setting the stage for more specialized applications in software engineering.
+
+In the realm of large pre-trained models, \cite{pan2023} introduced \textit{SteloCoder}, a decoder-only Large Language Model (LLM) based on StarCoder, specifically tailored for multi-language-to-Python translation. By incorporating a Mixture-of-Experts (MoE) architecture and fine-tuning via the Low-Rank Adaptive Method (LoRA), SteloCoder achieved remarkable efficiency with minimal parameter overhead. Utilizing curriculum learning and self-instructed data, SteloCoder set new benchmarks on the XLCoST dataset, attaining an average CodeBLEU score of 73.76 with only 45M additional parameters and 32 hours of training.
+
+\subsection{The T5 Model and Its Applications in Code Translation}
+
+The Text-to-Text Transfer Transformer (T5) model, introduced by \cite{kyle2021}, has emerged as a versatile framework for a wide array of NLP tasks, including those related to programming. By framing every task as a text-to-text problem, T5 offers a unified architecture and loss function, facilitating seamless adaptation to diverse applications such as translation, summarization, and code generation.
+
 \begin{figure}[h]
-    \centering
-    \includegraphics[width=0.8\textwidth]{Images/3.png} % Replace with NMT bug fixing diagram
-    \caption{Neural Machine Translation for Automated Bug Fixing}
-    \label{fig:nmt-bug-fixing}
+\centering
+\includegraphics[width=1\textwidth]{Images/T5.png}
+\caption{T5 (Text-To-Text Transfer Transformer) model}
+\label{fig:t5-model}
 \end{figure}
 
-\cite{lachaux2020} introduced TransCoder, a system for translating functions between programming languages without requiring parallel training data. By leveraging monolingual source code and unsupervised learning techniques, TransCoder captured language-specific patterns. The objective was to minimize a combined reconstruction and translation loss, as described in equation \ref{eq:loss}:
-\begin{equation}
-\mathcal{L} = \mathcal{L}_{\text{reconstruction}} + \mathcal{L}_{\text{translation}},
-\label{eq:loss}
-\end{equation}
-where \( \mathcal{L}_{\text{reconstruction}} \) ensures that monolingual data reconstructs correctly, and \( \mathcal{L}_{\text{translation}} \) aligns the latent spaces of source and target languages. TransCoder outperformed rule-based systems, showcasing robust language-agnostic representations.
 
+\subsubsection{Architecture and Training Paradigm}
 
-\cite{katz2019}addressed decompilation, converting low-level code to high-level programming languages. Traditional decompilers relied on expert-crafted rules, but Katz et al. proposed a neural model to reverse compiler processes. Their NMT-based framework achieved high success rates in translating LLVM IR and x86 assembly back to source code, with substantial improvements over rule-based systems. 
+T5's encoder-decoder architecture is adept at handling sequence-to-sequence tasks. The encoder processes the input sequence, generating a context-aware latent representation, while the decoder generates the output sequence based on this representation. This architecture allows T5 to maintain contextual integrity and capture the syntactic and semantic nuances essential for accurate code translation.
 
-More recently, \cite{xiyu2024} explored transformer models for compilation tasks, marking a shift towards leveraging large pre-trained models. Transformers, with their self-attention mechanisms, allowed efficient modeling of long-range dependencies in code. The attention mechanism is expressed in equation \ref{eq:attention}, as shown below:
-\begin{equation}
-\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^\top}{\sqrt{d_k}}\right)V,
-\label{eq:attention}
-\end{equation}
-where \( Q \), \( K \), and \( V \) are query, key, and value matrices, and \( d_k \) is the dimensionality of the keys. These models opened new possibilities for tasks like code generation, translation, and repair.
+Pretrained on the Colossal Clean Crawled Corpus (C4), T5 benefits from extensive language understanding, which can be fine-tuned for domain-specific tasks like code translation. The model employs advanced subword tokenization techniques, such as SentencePiece, enabling it to handle diverse programming languages and out-of-vocabulary tokens effectively.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=1\textwidth]{Images/T5-architecture.png}
+\caption{Encoder-Decoder Architecture}
+\label{fig:encoder-decoder-architecture}
+\end{figure}
 
 
 
-These advancements collectively illustrate the evolution of machine learning techniques for programming tasks. From tree-based models to NMT and transformers, each step has contributed to a deeper understanding of how programs can be represented, translated, and optimized, forming the foundation for the methods explored in this work.
+\subsubsection{Applications in Code Translation}
 
-In the realm of multi-language-to-code translation, \cite{pan2023} introduced SteloCoder, a decoder-only LLM based on StarCoder, tailored specifically for translating multiple programming languages into Python. Their approach incorporates a Mixture-of-Experts (MoE) architecture with fine-tuning via a Low-Rank Adaptive Method (LoRA), achieving remarkable efficiency with minimal parameter overhead. Utilizing curriculum learning and self-instructed data for training, SteloCoder surpasses existing benchmarks on the XLCoST dataset \cite{xlcost2022} with an average CodeBLEU score of 73.76. Notably, it achieves these results with only 45M additional parameters and 32 hours of training, setting a new standard for efficiency and performance in code translation.
+T5 has been successfully applied to various code-related tasks. For instance, \cite{pan2023} leveraged a T5-based architecture in SteloCoder to achieve high performance in multi-language-to-Python translation. Their approach demonstrated that with appropriate fine-tuning, T5 can capture the intricate patterns of different programming languages, facilitating accurate and efficient code translation.
+
+Our work extends this line of research by generating a specialized dataset comprising pseudo code, Python, and Java translations. By fine-tuning the T5-small variant on this dataset, we aim to enhance the model's capability in translating natural language descriptions into executable code across multiple programming languages. This approach not only builds on the strengths of T5 in handling sequence-to-sequence tasks but also addresses the specific challenges associated with code translation, such as maintaining syntactic correctness and semantic fidelity.
+
+\subsection{Comparison with Existing Models}
+
+While models like TransCoder and SteloCoder have set high benchmarks in code translation, our approach distinguishes itself through the generation of a pseudo code intermediary. This strategy allows for a more structured and language-agnostic representation of programming constructs, potentially improving the translation accuracy and facilitating easier adaptation to additional programming languages.
+
+Moreover, by utilizing the T5-small variant, our method offers a more resource-efficient solution compared to larger models, making it accessible for environments with limited computational resources. This balance between performance and efficiency aligns with the growing need for scalable and adaptable machine learning solutions in software engineering.
 
 \section{Proposed Work}
 
