@@ -120,7 +120,7 @@ The data preparation methodology involves a series of systematic steps designed 
 \begin{figure}[h!]
 \centering
 \includegraphics[width=0.7\textwidth]{dataset_methodology.png} % Replace with actual flowchart file
-\caption{Dataset Preparation Methodology}
+\caption{Dataset Generation Methodology}
 \label{fig:dataset-methodology}
 \end{figure}
 
@@ -140,11 +140,11 @@ The process of data preparation is done through several key steps to ensure the 
 \State Determine the total number of rows in the dataset, $n$
 \For{each text sample in \texttt{data["text"][1:n]}}
     \State \textbf{Generate pseudocode} using the text input
-    \State Wait for 5 seconds
+    
     \State \textbf{Generate Python code} from the pseudocode
-    \State Wait for 5 seconds
+   
     \State \textbf{Generate Java code} from the pseudocode
-    \State Wait for 5 seconds
+ 
     \State Structure the generated data into a new DataFrame
     \State Append the new DataFrame to the existing dataset
     \State Save the updated dataset to \texttt{Dataset.csv}
