@@ -140,9 +140,7 @@ The process of data preparation is done through several key steps to ensure the 
 \State Determine the total number of rows in the dataset, $n$
 \For{each text sample in \texttt{data["text"][1:n]}}
     \State \textbf{Generate pseudocode} using the text input
-    
     \State \textbf{Generate Python code} from the pseudocode
-   
     \State \textbf{Generate Java code} from the pseudocode
  
     \State Structure the generated data into a new DataFrame
@@ -189,14 +187,7 @@ These interconnected methodologies ensure the system’s robustness and precisio
 
 The process begins with feeding a set of text instructions into the Gemini model to generate pseudocode, an abstract, language-agnostic representation of the program's logic. The pseudocode is then fed again into Gemini to produce executable code snippets in both Java and Python. This ensures that the generated code snippets remain independent of specific language attributes or properties, such as Python's \texttt{.reverse()} method. This is done to make the output more versatile and compliant with wider standards of programming; that it is not dependent on specific inbuilt functions or language syntaxes. Through this two-stage process, the method ensures production of modular, efficient, and language-independent code.
 
-\noindent Example of the data generation process in pseudo-code:
-\begin{lstlisting}[language=Python, caption={Pseudocode for Dataset Preparation}]
-# Generate paired Java and Python snippets
-for instruction in pseudocode_list:
-    java_snippet = generate_code(instruction, "Java")
-    python_snippet = generate_code(instruction, "Python")
-    dataset.append((java_snippet, python_snippet))
-\end{lstlisting}
+
 
 One of the main challenges during implementation was that there was an imbalance between the pseudocode instructions and significant differences in syntax and semantics between Java and Python. The approach to this was a balanced dataset, where the number of Java and Python snippets were equal to each other for consistency and compatibility. The other challenge was that API rate limits could break up iterative workflows. This problem was solved by incorporating a delay mechanism between API calls, thus making sure the system respects rate constraints while executing uninterruptedly.
 \subsubsection{Model Architecture}
