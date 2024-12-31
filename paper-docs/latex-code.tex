@@ -101,7 +101,18 @@ Pretrained on the Colossal Clean Crawled Corpus (C4), T5 benefits from extensive
 \label{fig:encoder-decoder-architecture}
 \end{figure}
 
+The T5 model employs the encoder-decoder Transformer architecture \cite{kyle2021}. The encoder processes the input sequence $X = \{x_1, x_2, \dots, x_n\}$, while the decoder generates the output sequence $Y = \{y_1, y_2, \dots, y_m\}$. Both components leverage self-attention and feedforward layers.
 
+
+
+\paragraph{Self-Attention Mechanism}
+The self-attention mechanism computes attention scores to capture relationships between tokens. For a query \(Q\), key \(K\), and value \(V\), the attention mechanism is given by the formula in equation \ref{eq:attention-mechanism}:
+
+\begin{equation}
+\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V,
+\label{eq:attention-mechanism}
+\end{equation}
+where \(d_k\) is the dimensionality of the key vectors.
 
 \subsubsection{Applications in Code Translation}
 
