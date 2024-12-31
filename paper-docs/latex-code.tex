@@ -44,7 +44,7 @@ Using T5-Small}
 
 Code-to-code translation has emerged as a vital component of modern software engineering, addressing critical challenges such as adapting legacy systems to contemporary technologies, improving code maintainability, and facilitating cross-language interoperability. Organizations frequently face the need to migrate from languages like Java to Python to leverage Python’s robust ecosystem, including its extensive data science libraries and flexibility for rapid prototyping. However, translating codebases reliably while preserving their original logic and functionality is a complex task. Manual approaches are not only resource-intensive but also prone to errors, necessitating the development of sophisticated automated methods. Furthermore, the rise of Domain-Specific Languages (DSLs) like Spark, NumPy, and TACO has emphasized the need for efficient code translation techniques, as these DSLs require rewriting legacy code to utilize their optimized features. This process, though beneficial, is time-consuming and risks altering the intended behavior of the software, underscoring the importance of automated transpilation.
 
-Recent advancements in machine learning (ML) and natural language processing (NLP) have opened promising avenues for automating programming tasks, with transformer-based Large Language Models (LLMs) like BERT \cite{bert2018}, GPT-3 \cite{gpt32020}, CodeBERT \cite{codebert2020}, and T5 \cite{t52019} demonstrating exceptional potential in code generation, repair, and translation. These models employ self-attention mechanisms to capture complex relationships in sequential data such as code. For example, BERT introduced bidirectional encoding for deep contextual understanding, redefining text representation in NLP tasks. GPT-3, with its 175 billion parameters, excels in few-shot learning, enabling it to perform well on diverse tasks without extensive task-specific training. Similarly, CodeBERT extends BERT’s architecture to programming languages, excelling in tasks like code understanding, search, and translation by modeling both syntax and semantics. T5, with its text-to-text framework, redefines NLP tasks and achieves state-of-the-art results across multiple domains, including code translation. BART (Lewis et al., 2019) \cite{bart2019} is a denoising autoencoder for pretraining sequence-to-sequence models, combining ideas from BERT and GPT. It achieves state-of-the-art results in tasks like text generation, summarization, and translation through innovative noising techniques.
+Recent advancements in machine learning (ML) and natural language processing (NLP) have opened promising avenues for automating programming tasks, with transformer-based Large Language Models (LLMs) like BERT \cite{bert2018}, GPT-3 \cite{gpt32020}, CodeBERT \cite{codebert2020}, and T5 \cite{t52019} demonstrating exceptional potential in code generation, repair, and translation. These models employ self-attention mechanisms to capture complex relationships in sequential data such as code. For example, BERT introduced bidirectional encoding for deep contextual understanding, redefining text representation in NLP tasks. GPT-3, with its 175 billion parameters, excels in few-shot learning, enabling it to perform well on diverse tasks without extensive task-specific training. Similarly, CodeBERT extends BERT’s architecture to programming languages, excelling in tasks like code understanding, search, and translation by modeling both syntax and semantics. T5, with its text-to-text framework, redefines NLP tasks and achieves state-of-the-art results across multiple domains, including code translation. BART \cite{bart2019} is a denoising autoencoder for pretraining sequence-to-sequence models, combining ideas from BERT and GPT. It achieves state-of-the-art results in tasks like text generation, summarization, and translation through innovative noising techniques.
 
 Despite these advancements, challenges such as robustness, correctness, and handling syntactic and semantic disparities between languages like Java and Python persist. Tools like TransCoder \cite{lachaux2020} have demonstrated unsupervised code translation by leveraging monolingual data and aligning latent spaces, yet they often struggle with edge cases and cross-language dependencies. Tree-LSTM models extend traditional LSTM networks to process hierarchical data structures, such as Abstract Syntax Trees (ASTs), and have proven useful in capturing relationships in programming code \cite{tai2015}. Neural decompilation \cite{katz2019}, which leverages neural machine translation (NMT) \cite{nmt2019} to reverse-engineer compiled code into high-level representations, exemplifies another innovative approach to handling complex code transformations \cite{katz2019}. Additionally, advanced models like CodeT5  incorporate identifier-aware mechanisms specifically tailored for programming tasks, enabling a deeper understanding of code structures and improving translation accuracy \cite{codet52021}. Furthermore, XLNet's autoregressive pretraining has been successfully adapted for programming languages, enhancing its ability to generate coherent and syntactically valid code \cite{xlnet2019}.
 
@@ -65,16 +65,16 @@ This innovation laid the groundwork for program analysis and transformation. A s
 
 
 
-Chen et al. \cite{chen2018} extended this approach by proposing a tree-to-tree encoder-decoder framework tailored specifically for code. This framework enabled structured transformations between different tree representations, such as converting an AST of one language into another. The encoder mapped the source tree \( T_s \) into a latent representation \( z \), and the decoder reconstructed the target tree \( T_t \). This process is expressed in equation~\ref{eq:tree-to-tree}:
+\cite{chen2018} extended this approach by proposing a tree-to-tree encoder-decoder framework tailored specifically for code. This framework enabled structured transformations between different tree representations, such as converting an AST of one language into another. The encoder mapped the source tree \( T_s \) into a latent representation \( z \), and the decoder reconstructed the target tree \( T_t \). This process is expressed in equation~\ref{eq:tree-to-tree}:
 \begin{equation}
 z = f_{\text{encoder}}(T_s), \quad T_t = f_{\text{decoder}}(z).
 \label{eq:tree-to-tree}
 \end{equation}
 
-Drissi et al. (2018)\cite{drissi2018} refined these ideas further by introducing the Left-Child Right-Sibling (LCRS) representation, simplifying tree encoding by reducing tree structures into binary trees, which proved effective for program translation tasks.
+\cite{drissi2018} refined these ideas further by introducing the Left-Child Right-Sibling (LCRS) representation, simplifying tree encoding by reducing tree structures into binary trees, which proved effective for program translation tasks.
 
 
-The advent of neural machine translation (NMT) frameworks inspired new applications beyond natural language. Tufano et al. (2018) \cite{tufano2018} explored automated bug fixing by applying NMT to software maintenance tasks. They mined GitHub for bug-fix commits and abstracted code changes into generalizable patterns. Using tools like GumTree for edit tracking, they trained models capable of generating patches resembling developer edits. The loss function used to train the model, minimizing syntactic and semantic differences between generated and ground truth patches, is expressed in equation~\ref{eq:nmt-bug-fixing}:
+The advent of neural machine translation (NMT) frameworks inspired new applications beyond natural language. \cite{tufano2018} explored automated bug fixing by applying NMT to software maintenance tasks. They mined GitHub for bug-fix commits and abstracted code changes into generalizable patterns. Using tools like GumTree for edit tracking, they trained models capable of generating patches resembling developer edits. The loss function used to train the model, minimizing syntactic and semantic differences between generated and ground truth patches, is expressed in equation~\ref{eq:nmt-bug-fixing}:
 \begin{equation}
 \mathcal{L} = \sum_{i=1}^N \text{CrossEntropy}(\hat{y}_i, y_i),
 \label{eq:nmt-bug-fixing}
@@ -87,7 +87,7 @@ where \( \hat{y}_i \) is the predicted token and \( y_i \) is the actual token. 
     \label{fig:nmt-bug-fixing}
 \end{figure}
 
-Lachaux et al. (2020) \cite{lachaux2020} introduced TransCoder, a system for translating functions between programming languages without requiring parallel training data. By leveraging monolingual source code and unsupervised learning techniques, TransCoder captured language-specific patterns. The objective was to minimize a combined reconstruction and translation loss, as described in equation \ref{eq:loss}:
+\cite{lachaux2020} introduced TransCoder, a system for translating functions between programming languages without requiring parallel training data. By leveraging monolingual source code and unsupervised learning techniques, TransCoder captured language-specific patterns. The objective was to minimize a combined reconstruction and translation loss, as described in equation \ref{eq:loss}:
 \begin{equation}
 \mathcal{L} = \mathcal{L}_{\text{reconstruction}} + \mathcal{L}_{\text{translation}},
 \label{eq:loss}
@@ -95,9 +95,9 @@ Lachaux et al. (2020) \cite{lachaux2020} introduced TransCoder, a system for tra
 where \( \mathcal{L}_{\text{reconstruction}} \) ensures that monolingual data reconstructs correctly, and \( \mathcal{L}_{\text{translation}} \) aligns the latent spaces of source and target languages. TransCoder outperformed rule-based systems, showcasing robust language-agnostic representations.
 
 
-Katz et al. (2019) \cite{katz2019}addressed decompilation, converting low-level code to high-level programming languages. Traditional decompilers relied on expert-crafted rules, but Katz et al. proposed a neural model to reverse compiler processes. Their NMT-based framework achieved high success rates in translating LLVM IR and x86 assembly back to source code, with substantial improvements over rule-based systems. 
+\cite{katz2019}addressed decompilation, converting low-level code to high-level programming languages. Traditional decompilers relied on expert-crafted rules, but Katz et al. proposed a neural model to reverse compiler processes. Their NMT-based framework achieved high success rates in translating LLVM IR and x86 assembly back to source code, with substantial improvements over rule-based systems. 
 
-More recently, Xiyu Zhai et al. (2024) \cite{xiyu2024} explored transformer models for compilation tasks, marking a shift towards leveraging large pre-trained models. Transformers, with their self-attention mechanisms, allowed efficient modeling of long-range dependencies in code. The attention mechanism is expressed in equation \ref{eq:attention}, as shown below:
+More recently, \cite{xiyu2024} explored transformer models for compilation tasks, marking a shift towards leveraging large pre-trained models. Transformers, with their self-attention mechanisms, allowed efficient modeling of long-range dependencies in code. The attention mechanism is expressed in equation \ref{eq:attention}, as shown below:
 \begin{equation}
 \text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^\top}{\sqrt{d_k}}\right)V,
 \label{eq:attention}
@@ -108,7 +108,7 @@ where \( Q \), \( K \), and \( V \) are query, key, and value matrices, and \( d
 
 These advancements collectively illustrate the evolution of machine learning techniques for programming tasks. From tree-based models to NMT and transformers, each step has contributed to a deeper understanding of how programs can be represented, translated, and optimized, forming the foundation for the methods explored in this work.
 
-In the realm of multi-language-to-code translation, Pan et al. (2023) \cite{pan2023} introduced SteloCoder, a decoder-only LLM based on StarCoder, tailored specifically for translating multiple programming languages into Python. Their approach incorporates a Mixture-of-Experts (MoE) architecture with fine-tuning via a Low-Rank Adaptive Method (LoRA), achieving remarkable efficiency with minimal parameter overhead. Utilizing curriculum learning and self-instructed data for training, SteloCoder surpasses existing benchmarks on the XLCoST dataset \cite{xlcost2022} with an average CodeBLEU score of 73.76. Notably, it achieves these results with only 45M additional parameters and 32 hours of training, setting a new standard for efficiency and performance in code translation.
+In the realm of multi-language-to-code translation, \cite{pan2023} introduced SteloCoder, a decoder-only LLM based on StarCoder, tailored specifically for translating multiple programming languages into Python. Their approach incorporates a Mixture-of-Experts (MoE) architecture with fine-tuning via a Low-Rank Adaptive Method (LoRA), achieving remarkable efficiency with minimal parameter overhead. Utilizing curriculum learning and self-instructed data for training, SteloCoder surpasses existing benchmarks on the XLCoST dataset \cite{xlcost2022} with an average CodeBLEU score of 73.76. Notably, it achieves these results with only 45M additional parameters and 32 hours of training, setting a new standard for efficiency and performance in code translation.
 
 \section{Proposed Work}
 
@@ -450,74 +450,8 @@ The BLEU score, a commonly used metric for sequence-to-sequence tasks, was used 
 The findings indicate that the T5 model demonstrates the potential to produce reasonable quality translations from Java to Python, achieving a BLEU score of 42. While this score suggests room for improvement, it highlights that the generated translations are a solid starting point. An experienced programmer can refine these outputs more efficiently than performing a full manual transpilation, significantly saving time and effort. Future research could focus on testing alternative models for Java-to-Python transpilation to enhance performance, exploring the feasibility of T5 and other models for transpilation across a broader range of programming languages, and applying the T5 model to low-resource programming languages to evaluate its adaptability and efficiency in diverse and challenging linguistic contexts. These efforts could pave the way for the development of more robust and efficient automated programming tools.
 
 \clearpage
-\begin{thebibliography}{99}
 
-\bibitem{bert2018}
-Jacob Devlin, Ming-Wei Chang, Kenton Lee, Kristina Toutanova (2018). "BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding"
-\href{https://arxiv.org/abs/1810.04805}{https://arxiv.org/abs/1810.04805}
-
-\bibitem{gpt32020}
-Tom B. Brown, Benjamin Mann, Nick Ryder, Melanie Subbiah, et. al (2020). "Language Models are Few-Shot Learners"
-\href{https://arxiv.org/abs/2005.14165}{https://arxiv.org/abs/2005.14165}
-
-\bibitem{codebert2020}
-Zhangyin Feng, Daya Guo, Duyu Tang, Nan Duan, Xiaocheng Feng, Ming Gong, Linjun Shou, Bing Qin, Ting Liu, Daxin Jiang, Ming Zhou (2020). "CodeBERT: A Pre-Trained Model for Programming and Natural Languages"
-\href{https://arxiv.org/abs/2002.08155}{https://arxiv.org/abs/2002.08155}
-
-\bibitem{t52019}
-Colin Raffel, Noam Shazeer, Adam Roberts, Katherine Lee, Sharan Narang, Michael Matena, Yanqi Zhou, Wei Li, Peter J. Liu (2019). "Exploring the Limits of Transfer Learning with a Unified Text-to-Text Transformer"
-\href{https://arxiv.org/abs/1910.10683}{https://arxiv.org/abs/1910.10683}
-
-\bibitem{abstree2023}
-Weisong Sun, Chunrong Fang, Yun Miao, Yudu You, Mengzhe Yuan, Yuchen Chen, Quanjun Zhang, An Guo, Xiang Chen, Yang Liu, Zhenyu Chen (2023). "Abstract Syntax Tree for Programming Language Understanding and Representation: How Far Are We?" \href{https://arxiv.org/abs/2312.00413}{https://arxiv.org/abs/2312.00413}
-
-\bibitem{lachaux2020}
-Marie-Anne Lachaux, Baptiste Roziere, Lowik Chanussot, Guillaume Lample (2020). "Unsupervised Translation of Programming Languages" \href{https://arxiv.org/abs/2006.03511}{https://arxiv.org/abs/2006.03511}
-
-\bibitem{katz2019}
-Katz, G., Matuszek, C. (2019). "Towards Neural Decompilation." 
-\href{https://arxiv.org/abs/1905.08325}{https://arxiv.org/abs/1905.08325}
-
-\bibitem{tai2015}
-Tai, K., Socher, R., Manning, C. D. (2015). "Improved Semantic Representations From Tree-Structured Long Short-Term Memory Networks." \href{https://arxiv.org/abs/1503.00075}{https://arxiv.org/abs/1503.00075}
-
-\bibitem{nmt2019}
-Felix Stahlberg (2019). "Neural Machine Translation: A Review and Survey"
-\href{https://arxiv.org/abs/1912.02047}{https://arxiv.org/abs/1912.02047}
-
-\bibitem{chen2018}
-Chen, D., Zhang, X., Zhao, H. (2018). "Tree-to-Tree Neural Networks for Code Transformation." \href{https://arxiv.org/abs/1802.03691}{https://arxiv.org/abs/1802.03691}   
-
-\bibitem{codet52021}
-Yue Wang, Weishi Wang, Shafiq Joty, Steven C.H. Hoi (2021). "CodeT5: Identifier-aware Unified Pre-trained Encoder-Decoder Models for Code Understanding and Generation" \href{https://arxiv.org/abs/2109.00859}{https://arxiv.org/abs/2109.00859}
-
-\bibitem{xlnet2019}
-Zhilin Yang, Zihang Dai, Yiming Yang, Jaime Carbonell, Ruslan Salakhutdinov, Quoc V. Le (2019). "XLNet: Generalized Autoregressive Pretraining for Language Understanding" \href{https://arxiv.org/abs/1906.08237}{https://arxiv.org/abs/1906.08237}
-
-\bibitem{drissi2018}
-Drissi, Y., Boudjelida, Z., El Kourdi, M. (2018). "Program Language Translation Using a Grammar-Driven Tree-to-Tree Model" \href{https://arxiv.org/abs/1807.01784}{https://arxiv.org/abs/1807.01784}
-
-\bibitem{tufano2018}
-Michele Tufano, Cody Watson, Gabriele Bavota, Massimiliano Di Penta, Martin White, Denys Poshyvanyk (2018). "An Empirical Study on Learning Bug-Fixing Patches in the Wild via Neural Machine Translation"  \href{https://arxiv.org/abs/1812.08693}{https://arxiv.org/abs/1812.08693}
-
-\bibitem{xiyu2024}
-Xiyu Zhai, Runlong Zhou, Liao Zhang, Simon Shaolei Du (2024). "Transformers are Efficient Compilers, Provably" \href{https://arxiv.org/absX/2410.14706}{https://arxiv.org/abs/2410.14706} 
-
-\bibitem{pan2023}
-Jialing Pan, Adrien Sadé, Jin Kim, Eric Soriano, Guillem Sole, Sylvain Flamant (2023). "SteloCoder: a Decoder-Only LLM for Multi-Language to Python Code Translation" \href{https://arxiv.org/abs/2310.15539v2}{https://arxiv.org/abs/2310.15539v2}
-
-\bibitem{xlcost2022}
-Ming Zhu, Aneesh Jain, Karthik Suresh, Roshan Ravindran, Sindhu Tipirneni, Chandan K. Reddy (2022) "XLCoST: A Benchmark Dataset for Cross-lingual Code Intelligence" \href{https://arxiv.org/abs/2206.08474}{https://arxiv.org/abs/2206.08474}
-
-\bibitem{gemini2023}
-Gemini Team Google: Rohan Anil, Sebastian Borgeaud, Jean-Baptiste Alayrac, Jiahui Yu, Radu Soricut et al. (2023) "Gemini: A Family of Highly Capable Multimodal Models" \href{https://arxiv.org/abs/2312.11805}{https://arxiv.org/abs/2312.11805}
-
-\bibitem{kyle2021}
-Kyle Aitken, Vinay V Ramasesh, Yuan Cao, Niru Maheswaranathan (2021) "Understanding How Encoder-Decoder Architectures Attend" \href{https://arxiv.org/abs/2110.15253}{https://arxiv.org/abs/2110.15253}
-
-\bibitem{bart2019}
-Mike Lewis, Yinhan Liu, Naman Goyal, Marjan Ghazvininejad, Abdelrahman Mohamed, Omer Levy, Ves Stoyanov, Luke Zettlemoyer (2019). "BART: Denoising Sequence-to-Sequence Pre-training for Natural Language Generation, Translation, and Comprehension" \href{https://arxiv.org/abs/1910.13461}{https://arxiv.org/abs/1910.13461}
-
-\end{thebibliography}
+\bibliographystyle{plain}
+\bibliography{references}
 
 \end{document}
