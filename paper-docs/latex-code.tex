@@ -13,21 +13,26 @@
 \usepackage{amsmath} % for math equations
 \usepackage{algorithm}
 \usepackage{algpseudocode}
+\usepackage[numbers]{natbib}    % For references
 \usepackage{verbatim}
 \usepackage{mathtools} % additional math features
 %% \usepackage{cleveref} % smart cross-referencing
 \usepackage{hyperref} % put hyperref last
 
+
 \author[1]{Anirudh Dambal}
 \author[1]{Harish Patil}
 \author[1]{Pavan Bhakta}
 \author[1]{Anusha Adarakatti}
+\author[1]{Praveen M. D}
 
-\affil{School of Computer Science and Engineering,
-KLE Technological University, Hubballi, Karnataka, India, 580031}
+\affil{School of Computer Science and Engineering, \\
+KLE Technological University, Hubballi, Karnataka, India, 580031 \\ 
+\email{\{01fe22bcs171, 01fe22bcs173, 01fe22bcs175, 01fe22bcs186, praveen.md\}@kletech.ac.in}}
 
 \title{Code to Code Conversion from Java to Python
-Using T5-Small}
+Using T5-Small model} 
+
 
 \begin{document}
 
@@ -38,16 +43,17 @@ Using T5-Small}
 \end{abstract}
 
 \begin{keywords}
-    {Transpilation, Encoder-Decoder Architecture, Multilingual Code Translation, Custom Dataset Generation, Pseudocode-Based Training, Gemini API, Cross-Language Programming}
+    {Transpilation, Encoder-Decoder Architecture, Multilingual Code Translation, Gemini API, Cross-Language Programming}
 \end{keywords}
 
 \section{Introduction}
 
-Code-to-code translation has emerged as a vital component of modern software engineering, addressing critical challenges such as adapting legacy systems to contemporary technologies, improving code maintainability, and facilitating cross-language interoperability. Organizations frequently face the need to migrate from languages like Java to Python to leverage Python’s robust ecosystem, including its extensive data science libraries and flexibility for rapid prototyping. However, translating codebases reliably while preserving their original logic and functionality is a complex task. Manual approaches are not only resource-intensive but also prone to errors, necessitating the development of sophisticated automated methods. Furthermore, the rise of Domain-Specific Languages (DSLs) like Spark, NumPy, and TACO has emphasized the need for efficient code translation techniques, as these DSLs require rewriting legacy code to utilize their optimized features. This process, though beneficial, is time-consuming and risks altering the intended behavior of the software, underscoring the importance of automated transpilation.
+Code-to-code translation has emerged as a vital component of modern software engineering, addressing critical challenges such as adapting legacy systems to contemporary technologies, improving code maintainability, and facilitating cross-language interoperability. Organizations frequently face the need to migrate from languages like Java to Python to leverage Python’s robust ecosystem, including its extensive data science libraries and flexibility for rapid prototyping. However, translating codebases reliably while preserving their original logic and functionality is a complex task. Manual approaches are not only resource-intensive but also prone to errors, necessitating the development of sophisticated automated methods. Furthermore, the rise of Domain-Specific Languages (DSLs) like Spark, NumPy, and Tensor Algebra Compiler (TACO) has emphasized the need for efficient code translation techniques, as these DSLs require rewriting legacy code to utilize their optimized features. This process, though beneficial, is time-consuming and risks altering the intended behavior of the software, underscoring the importance of automated transpilation.
 
-Recent advancements in machine learning (ML) and natural language processing (NLP) have opened promising avenues for automating programming tasks, with transformer-based Large Language Models (LLMs) like BERT \cite{bert2018}, GPT-3 \cite{gpt32020}, CodeBERT \cite{codebert2020}, and T5 \cite{t52019} demonstrating exceptional potential in code generation, repair, and translation. These models employ self-attention mechanisms to capture complex relationships in sequential data such as code. For example, BERT introduced bidirectional encoding for deep contextual understanding, redefining text representation in NLP tasks. GPT-3, with its 175 billion parameters, excels in few-shot learning, enabling it to perform well on diverse tasks without extensive task-specific training. Similarly, CodeBERT extends BERT’s architecture to programming languages, excelling in tasks like code understanding, search, and translation by modeling both syntax and semantics. T5, with its text-to-text framework, redefines NLP tasks and achieves state-of-the-art results across multiple domains, including code translation. BART \cite{bart2019} is a denoising autoencoder for pretraining sequence-to-sequence models, combining ideas from BERT and GPT. It achieves state-of-the-art results in tasks like text generation, summarization, and translation through innovative noising techniques.
+Recent advancements in Machine Learning (ML) and Natural Language Processing (NLP) have opened promising avenues for automating programming tasks, with transformer-based Large Language Models (LLMs) like 
+Bidirectional Encoder Representation from Transformers (BERT)  \cite{bert2018}, Generative Pre-trained Transformer 3 (GPT-3) \cite{gpt32020}, CodeBERT \cite{codebert2020}, and Text-to-Text Transfer Transformer (T5) \cite{t52019} demonstrating exceptional potential in code generation, repair, and translation. These models employ self-attention mechanisms to capture complex relationships in sequential data such as code. For example, BERT introduced bidirectional encoding for deep contextual understanding, redefining text representation in NLP tasks. GPT-3, with its 175 billion parameters, excels in few-shot learning, enabling it to perform well on diverse tasks without extensive task-specific training. Similarly, CodeBERT extends BERT’s architecture to programming languages, excelling in tasks like code understanding, search, and translation by modeling both syntax and semantics. T5, with its text-to-text framework, redefines NLP tasks and achieves state-of-the-art results across multiple domains, including code translation.  Bidirectional and Auto-Regressive Transformer (BART) \cite{bart2019} is a denoising autoencoder for pretraining sequence-to-sequence models, combining ideas from BERT and GPT. It achieves state-of-the-art results in tasks like text generation, summarization, and translation through innovative noising techniques.
 
-Despite these advancements, challenges such as robustness, correctness, and handling syntactic and semantic disparities between languages like Java and Python persist. Tools like TransCoder \cite{lachaux2020} have demonstrated unsupervised code translation by leveraging monolingual data and aligning latent spaces, yet they often struggle with edge cases and cross-language dependencies. Tree-LSTM models extend traditional LSTM networks to process hierarchical data structures, such as Abstract Syntax Trees (ASTs), and have proven useful in capturing relationships in programming code \cite{tai2015}. Neural decompilation \cite{katz2019}, which leverages neural machine translation (NMT) \cite{nmt2019} to reverse-engineer compiled code into high-level representations, exemplifies another innovative approach to handling complex code transformations \cite{katz2019}. Additionally, advanced models like CodeT5  incorporate identifier-aware mechanisms specifically tailored for programming tasks, enabling a deeper understanding of code structures and improving translation accuracy \cite{codet52021}. Furthermore, XLNet's autoregressive pretraining has been successfully adapted for programming languages, enhancing its ability to generate coherent and syntactically valid code \cite{xlnet2019}.
+Despite these advancements, challenges such as robustness, correctness, and handling syntactic and semantic disparities between languages like Java and Python persist. Tools like TransCoder \cite{lachaux2020} have demonstrated unsupervised code translation by leveraging monolingual data and aligning latent spaces, yet they often struggle with edge cases and cross-language dependencies. Tree-LSTM models extend traditional Long Short-Term Memory (LSTM) networks to process hierarchical data structures, such as Abstract Syntax Trees (ASTs), and have proven useful in capturing relationships in programming code \cite{tai2015}. Neural decompilation \cite{katz2019}, which leverages Neural Machine Translation (NMT) \cite{nmt2019} to reverse-engineer compiled code into high-level representations, exemplifies another innovative approach to handling complex code transformations \cite{katz2019}. Additionally, advanced models like CodeT5  incorporate identifier-aware mechanisms specifically tailored for programming tasks, enabling a deeper understanding of code structures and improving translation accuracy \cite{codet52021}. Furthermore, XLNet's autoregressive pretraining has been successfully adapted for programming languages, enhancing its ability to generate coherent and syntactically valid code \cite{xlnet2019}.
 
 To address these gaps, this study explores the T5-small model for automated Java-to-Python code translation by curating a balanced dataset and employing the T5 encoder-decoder architecture. By leveraging the strengths of modern transformer-based models and addressing existing limitations, this research aims to advance the field of automated transpilation, provide insights into the shortcomings of current methodologies, and propose new directions for enhancing translation reliability.
 
@@ -56,34 +62,28 @@ The rest of the paper is organized as follows: Section 2 reviews related work, f
 
 \section{Related Work}
 
-The integration of machine learning models into programming tasks has witnessed substantial advancements, particularly with the advent of transformer-based architectures. This section reviews the pivotal works in neural machine translation (NMT) for code, the evolution of transformer models with a focus on the T5 (Text-to-Text Transfer Transformer) model, and recent innovations that align closely with our approach.
+The integration of machine learning models into programming tasks has witnessed substantial advancements, particularly with the advent of transformer-based architectures. This section reviews the pivotal works in NMT for code, the evolution of transformer models with a focus on the T5 model, and recent innovations that align closely with our approach.
 
 \subsection{Neural Machine Translation for Code}
 
-Neural Machine Translation (NMT) has been instrumental in automating the translation of programming languages, facilitating code migration, and enhancing cross-language interoperability. Early approaches leveraged statistical methods; however, the field has progressively shifted towards neural architectures that better capture the syntactic and semantic nuances of programming languages.
+    NMT has been instrumental in automating the translation of programming languages, facilitating code migration, and enhancing cross-language interoperability. Early approaches leveraged statistical methods; however, the field has progressively shifted towards neural architectures that better capture the syntactic and semantic nuances of programming languages.\cite{tufano2018} pioneered the application of NMT for automated bug fixing. By mining GitHub repositories for bug-fix commits and abstracting code changes into generalizable patterns, their model effectively generated patches that mirrored developer edits. This approach underscored the potential of NMT in learning AST-level transformations, achieving high syntactic correctness.
 
-\cite{tufano2018} pioneered the application of NMT for automated bug fixing. By mining GitHub repositories for bug-fix commits and abstracting code changes into generalizable patterns, their model effectively generated patches that mirrored developer edits. This approach underscored the potential of NMT in learning AST-level transformations, achieving high syntactic correctness.
-
-Building on this foundation, \cite{lachaux2020} introduced \textit{TransCoder}, a system capable of translating functions between programming languages without relying on parallel training data. Utilizing unsupervised learning techniques, TransCoder effectively captured language-specific patterns, outperforming traditional rule-based systems and demonstrating robust language-agnostic representations.
-
-Similarly, \cite{katz2019} addressed the decompilation challenge by employing NMT-based frameworks to convert low-level code, such as LLVM IR and x86 assembly, back to high-level programming languages. Their neural model surpassed rule-based decompilers, highlighting the efficacy of NMT in reversing compiler processes.
+Building on this foundation, \cite{lachaux2020} introduced \textit{TransCoder}, a system capable of translating functions between programming languages without relying on parallel training data. Utilizing unsupervised learning techniques, TransCoder effectively captured language-specific patterns, outperforming traditional rule-based systems and demonstrating robust language-agnostic representations. Similarly, \cite{katz2019} addressed the decompilation challenge by employing NMT-based frameworks to convert low-level code, such as LLVM Intermediate Representation (IR) and x86 assembly, back to high-level programming languages. Their neural model surpassed rule-based decompilers, highlighting the efficacy of NMT in reversing compiler processes.
 
 \subsection{Transformer-Based Models for Code Translation}
 
-The introduction of transformer architectures has revolutionized various NLP tasks, including code translation. Transformers, with their self-attention mechanisms, excel at modeling long-range dependencies and capturing intricate relationships within data sequences, making them ideal for handling the complexity of programming languages.
-
-\cite{xiyu2024} explored the application of transformer models in compilation tasks, leveraging self-attention to efficiently model long-range dependencies in code. Their work demonstrated the versatility of transformers in tasks such as code generation, translation, and repair, setting the stage for more specialized applications in software engineering.
+The introduction of transformer architectures has revolutionized various NLP tasks, including code translation. Transformers, with their self-attention mechanisms, excel at modeling long-range dependencies and capturing intricate relationships within data sequences, making them ideal for handling the complexity of programming languages.\cite{xiyu2024} explored the application of transformer models in compilation tasks, leveraging self-attention to efficiently model long-range dependencies in code. Their work demonstrated the versatility of transformers in tasks such as code generation, translation, and repair, setting the stage for more specialized applications in software engineering.
 
 In the realm of large pre-trained models, \cite{pan2023} introduced \textit{SteloCoder}, a decoder-only Large Language Model (LLM) based on StarCoder \cite{li2023starcodersourceyou}, specifically tailored for multi-language-to-Python translation. By incorporating a Mixture-of-Experts (MoE) \cite{shazeer2017outrageouslylargeneuralnetworks} architecture and fine-tuning via the Low-Rank Adaptive Method (LoRA) \cite{hu2021loralowrankadaptationlarge}, SteloCoder achieved remarkable efficiency with minimal parameter overhead. Utilizing curriculum learning and self-instructed data, SteloCoder set new benchmarks on the XLCoST dataset \cite{xlcost2022}, attaining an average CodeBLEU score of 73.76 with only 45M additional parameters and 32 hours of training.
 
 \subsection{The T5 Model and Its Applications in Code Translation}
 
-The Text-to-Text Transfer Transformer (T5) model, introduced by \cite{kyle2021}, has emerged as a versatile framework for a wide array of NLP tasks, including those related to programming. By framing every task as a text-to-text problem, T5 offers a unified architecture and loss function, facilitating seamless adaptation to diverse applications such as translation, summarization, and code generation.
+T5 model, introduced by \cite{kyle2021}, has emerged as a versatile framework for a wide array of NLP tasks, including those related to programming. By framing every task as a text-to-text problem, T5 offers a unified architecture and loss function, facilitating seamless adaptation to diverse applications such as translation, summarization, and code generation.
 
 \begin{figure}[h]
 \centering
 \includegraphics[width=1\textwidth]{Images/T5.png}
-\caption{T5 (Text-To-Text Transfer Transformer) model}
+\caption{T5 model \cite{towardsdatascience_t5}}
 \label{fig:t5-model}
 \end{figure}
 
@@ -97,7 +97,7 @@ Pretrained on the Colossal Clean Crawled Corpus (C4) \cite{t52019}, T5 benefits 
 \begin{figure}[h]
 \centering
 \includegraphics[width=1\textwidth]{Images/T5-architecture.png}
-\caption{Encoder-Decoder Architecture}
+\caption{Encoder-Decoder Architecture \cite{primo_autoencoder}}
 \label{fig:encoder-decoder-architecture}
 \end{figure}
 
@@ -105,11 +105,10 @@ The T5 model employs the encoder-decoder Transformer architecture \cite{kyle2021
 
 
 
-\paragraph{Self-Attention Mechanism}
-The self-attention mechanism \cite{cheng2016longshorttermmemorynetworksmachine} computes attention scores to capture relationships between tokens. For a query \(Q\), key \(K\), and value \(V\), the attention mechanism is given by the formula in equation \ref{eq:attention-mechanism}:\ref{eq:attention-mechanism}:
+\textit{Self-Attention Mechanism}: The self-attention mechanism \cite{cheng2016longshorttermmemorynetworksmachine} computes attention scores to capture relationships between tokens. For a query \(Q\), key \(K\), and value \(V\), the attention mechanism is given by the formula in equation \ref{eq:attention-mechanism}:
 
 \begin{equation}
-\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V,
+\text{Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V
 \label{eq:attention-mechanism}
 \end{equation}
 where \(d_k\) is the dimensionality of the key vectors.
@@ -131,7 +130,7 @@ Moreover, by utilizing the T5-small variant, our method offers a more resource-e
 This work presents a transpilation framework for automatic translation between high-level programming languages, namely Java and Python, using a fine-tuned T5-small model. The framework employs the encoder-decoder architecture of T5-small to capture syntactic and semantic differences between these languages. The implementation focuses on training and inference, achieving a robust pipeline for translating Java code into Python.
 
 \subsection{Dataset preparation}
-The data preparation methodology involves a series of systematic steps designed to generate and balance pseudocode, Python, and Java code from text descriptions using Gemini Generative AI. The AI is guided to produce language-agnostic code that avoids language-specific built-in functions and dependencies, thus enhancing cross-language versatility. Data management is done using the pandas library, where generated outputs are appended to maintain an equal representation across different programming languages. The process has mitigated rate limit issues due to APIs; \texttt{time.sleep} is integrated for a delay between API calls to ensure smooth-running operations, and dynamic adjustment is carried out in regard to changing dataset sizes for this process. Finally, validation and saving of the last dataset are completed as a dependable source for future cross-language training and subsequent computational analysis.
+The data preparation methodology involves a series of systematic steps designed to generate and balance pseudocode, Python, and Java code from text descriptions using Gemini Generative AI. The AI is guided to produce language-agnostic code that avoids language-specific built-in functions and dependencies, thus enhancing cross-language versatility. Data management is done using the pandas library, where generated outputs are appended to maintain an equal representation across different programming languages. The process has mitigated rate limit issues due to Application Programming Interfaces (APIs); \texttt{time.sleep} is integrated for a delay between API calls to ensure smooth-running operations, and dynamic adjustment is carried out in regard to changing dataset sizes for this process. Finally, validation and saving of the last dataset are completed as a dependable source for future cross-language training and subsequent computational analysis.
 
 \begin{figure}[h!]
 \centering
@@ -142,7 +141,7 @@ The data preparation methodology involves a series of systematic steps designed 
 
 \subsubsection{Algorithms}
 
-The process of data preparation is done through several key steps to ensure the quality of the generated data as being both balanced and effective. We \textit{integrate the Gemini API}, which creates structured API calls that transform pseudocode into corresponding code snippets, starting with Java and Python code generation from pseudocode instructions. Next, we \textit{balance the data} so that we have equal numbers of pairs of Java and Python code by keeping the dataset fair to allow for cross-language training. Last but not least, we implement a 4-second delay between requests in order not to hit \textit{API rate limits}. That's essential to avoid hitting any breaks during the process. These steps combined result in a dataset that is reliable, well-rounded, and ready for further use.
+The process of data preparation is done through several key steps to ensure the quality of the generated data as being both balanced and effective. We integrate the \textit{Gemini API}, which creates structured API calls that transform pseudocode into corresponding code snippets, starting with Java and Python code generation from pseudocode instructions. Next, we \textit{balance the data} so that we have equal numbers of pairs of Java and Python code by keeping the dataset fair to allow for cross-language training. Last but not least, we implement a 4-second delay between requests in order not to hit \textit{API rate limits}. That's essential to avoid hitting any breaks during the process. These steps combined result in a dataset that is reliable, well-rounded, and ready for further use.
 
 \begin{algorithm}
 \caption{Generate Balanced Code Pairs from Text Input}
@@ -164,37 +163,37 @@ The process of data preparation is done through several key steps to ensure the 
     \State Save the updated dataset to \texttt{Dataset.csv}
 \EndFor
 \State \textbf{Output:} Updated \texttt{Dataset.csv}
-\end{algorithmic}F
+\end{algorithmic}
 \label{alg:generate-balanced-code}
 \end{algorithm}
 
 Generative AI, for example, Google Gemini-1.5 \cite{gemini2023}, makes use of advanced large-scale language models trained on multiple datasets to process natural language prompts and generate programmatic code in multiple languages. The technology allows for context-aware mechanisms to be used for accurate and versatile code generation. For data handling, the system uses Pandas, a Python-based data manipulation library to efficiently read, update, and save datasets in structured formats like.csv. It offers concatenation and indexing functionalities that can append newly created outputs including pseudo-code, Python and Java code into the system iteratively. This approach to workflow automation allows more scalability and consistency across different prompts. Moreover, for cross-language compatibility, this model designs its prompts such that they do not rely on the built-in functions that exist in other languages, allowing easy translations across languages.
 
-The self-attention mechanism is a fundamental component of the transformer architecture, computing relative relationships between input tokens according to the following equation, as shown in equation \ref{eq:self-attention}:
+The self-attention mechanism is a fundamental component of the transformer architecture, computing relative relationships between input tokens as shown in equation \ref{eq:self-attention}:
 
 \begin{equation}
-\text{Self-Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^\top}{\sqrt{d}}\right)V.
+\text{Self-Attention}(Q, K, V) = \text{softmax}\left(\frac{QK^\top}{\sqrt{d}}\right)V
 \label{eq:self-attention}
 \end{equation}
 
 where \( Q \) (query), \( K \) (key), and \( V \) (value) matrices are derived from input embeddings through learned transformations. The scaling factor \( \sqrt{d} \) stabilizes softmax probabilities, focusing computational resources on the most relevant tokens. Layer normalization further stabilizes model training by normalizing input vectors through the formula, as expressed in equation \ref{eq:layer-norm}:
 
 \begin{equation}
-\text{Norm}(x) = \frac{x - \mu}{\sigma + \epsilon}.
+\text{Norm}(x) = \frac{x - \mu}{\sigma + \epsilon}
 \label{eq:layer-norm}
 \end{equation}
 
 where \( \mu \) is the mean, \( \sigma \) is the standard deviation, and \( \epsilon \) is a small constant for numerical stability. The feedforward layers in transformers enhance the model’s non-linear learning capacity, expressed as shown in equation \ref{eq:ffn}:
 
 \begin{equation}
-\text{FFN}(x) = \text{max}(0, xW_1 + b_1)W_2 + b_2.
+\text{FFN}(x) = \text{max}(0, xW_1 + b_1)W_2 + b_2
 \label{eq:ffn}
 \end{equation}
 
 where \( W_1 \), \( W_2 \) are weight matrices, and \( b_1 \), \( b_2 \) are bias vectors. Lastly, cross-entropy loss optimizes the model by minimizing the error between true labels (\( y_i \)) and predictions (\( \hat{y}_i \)) using the formula in equation \ref{eq:cross-entropy}:
 
 \begin{equation}
-L = -\sum_{i=1}^N y_i \log(\hat{y}_i).
+L = -\sum_{i=1}^N y_i \log(\hat{y}_i)
 \label{eq:cross-entropy}
 \end{equation}
 
@@ -211,7 +210,7 @@ One of the main challenges during implementation was that there was an imbalance
 A denoising goal named \textit{span corruption} is used to pre-train the T5 model. This configuration substitutes a unique token for randomly masked text passages. Reconstructing the original text is the aim of the model. Mathematically, let \( \hat{X} \) be the corrupted input and \( X \) the original sequence, then the objective is to maximize the formula in equation \ref{eq:pretrain-objective}:
 
 \begin{equation}
-\mathcal{L}_{\text{pretrain}} = \sum_{i=1}^n \log P(x_i | \hat{X}, \theta),
+\mathcal{L}_{\text{pretrain}} = \sum_{i=1}^n \log P(x_i | \hat{X}, \theta)
 \label{eq:pretrain-objective}
 \end{equation}
 where \( \theta \) represents the model parameters.
@@ -223,46 +222,47 @@ where \( \theta \) represents the model parameters.
 \begin{algorithmic}[1]
 \Require 
 \begin{itemize}
-    \item A pre-trained T5 transformer model.
-    \item A parallel dataset of Java and Python code samples.
+    A pre-trained T5 transformer model.
+    A parallel dataset of Java and Python code samples.
 \end{itemize}
 \Ensure A fine-tuned model capable of translating Java code to Python.
 
 \State \textbf{Step 1: Model Initialization}
-\State Load a pre-trained T5 transformer as the base translation model.
-\State Configure the model for the specified hardware (e.g., GPU or CPU).
+
+Load a pre-trained T5 transformer as the base translation model.
+
+Configure the model for the specified hardware (e.g., GPU or CPU).
 
 \State \textbf{Step 2: Data Preparation}
-\State Retrieve a parallel dataset containing Java code and corresponding Python translations.
-\State Split the dataset into training and validation subsets (e.g., 75\% for training, 25\% for validation).
+
+Retrieve the dataset containing Java code and corresponding Python translations.
+
+Split the dataset into training and validation subsets
 
 \State \textbf{Step 3: Model Fine-Tuning}
-\State Fine-tune the T5 transformer using the training dataset:
-\begin{itemize}
-    \item Define the loss function to minimize translation error.
-    \item Optimize hyperparameters such as batch size, learning rate, and number of epochs.
-\end{itemize}
+
+Define the loss function to minimize translation error
+
+Optimize hyperparameters such as batch size, learning rate, and number of epochs.
 
 \State \textbf{Step 4: Evaluation}
-\State Evaluate the fine-tuned model on the validation dataset:
-\begin{itemize}
-    \item Measure translation accuracy using metrics such as BLEU or exact match accuracy.
-    \item Analyze error patterns to identify potential areas for improvement.
-\end{itemize}
+
+Evaluate the fine-tuned model on the validation dataset using metrics BLEU.
 
 \State \textbf{Step 5: Inference}
-\State Provide the fine-tuned model with unseen Java code samples.
-\State Generate Python translations for the input samples.
-\State Analyze the outputs qualitatively and quantitatively.
 
-\State \textbf{Step 6: Model Deployment}
-\State Save the fine-tuned model and tokenizer to a persistent storage system for future inference and experimentation.
+Provide the fine-tuned model with unseen Java code samples.
+
+Generate Python translations for the input samples.
+
+Analyze the outputs qualitatively and quantitatively.
+
+\State \textbf{Step 6: Model Deployment} 
+
+Save the fine-tuned model and tokenizer to a persistent storage system for future inference and experimentation.
 
 \end{algorithmic}
 \end{algorithm}
-
-\subsubsection{Summary}
-The T5 model is a flexible tool for language production and interpretation because of its strong pre-training mechanism and unified approach to NLP tasks via a text-to-text framework. Across several benchmarks, its advances have greatly enhanced the state-of-the-art.
 
 \section{Results and Analysis}
 
@@ -417,7 +417,7 @@ return sum(a, b)
 
 Table \ref{table:code_snippets_java_python} demonstrates some simple Java to Python code translations, highlighting the syntax similarities and differences between the two languages.
 
-\textit{Key Advantage} 
+\textit{Key Advantage}: 
 The framework offers several notable advantages. First, it ensures high-quality translations, leveraging the capabilities of the Gemini API to deliver accurate and reliable outputs. Additionally, it is designed for scalability, allowing seamless extension to support other programming languages as needed. Furthermore, the framework accommodates both semantic and syntactic variability, making it versatile and effective for diverse use cases in code transpilation.
 
 
@@ -426,8 +426,6 @@ The BLEU score, a commonly used metric for sequence-to-sequence tasks, was used 
 \section{Conclusion and Future Work}
 
 The findings indicate that the T5 model demonstrates the potential to produce reasonable quality translations from Java to Python, achieving a BLEU score of 42. While this score suggests room for improvement, it highlights that the generated translations are a solid starting point. An experienced programmer can refine these outputs more efficiently than performing a full manual transpilation, significantly saving time and effort. Future research could focus on testing alternative models for Java-to-Python transpilation to enhance performance, exploring the feasibility of T5 and other models for transpilation across a broader range of programming languages, and applying the T5 model to low-resource programming languages to evaluate its adaptability and efficiency in diverse and challenging linguistic contexts. These efforts could pave the way for the development of more robust and efficient automated programming tools.
-
-\clearpage
 
 \bibliographystyle{plain}
 \bibliography{references}
