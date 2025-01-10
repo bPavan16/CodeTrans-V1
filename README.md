@@ -30,8 +30,6 @@ The model was evaluated on its ability to translate Java code into Python while 
 
 To use this model, follow these steps:
 
-Clone this repo
-
 ### Requirements
 - Python 3.7+
 - PyTorch
@@ -44,6 +42,7 @@ Clone this repo
 ```bash
 pip install torch transformers datasets tokenizers
 ```
-
-run train.py then infernce.py for results
+```
+python train.py
+```
 
