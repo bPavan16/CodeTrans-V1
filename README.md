@@ -28,7 +28,7 @@ The model was evaluated on its ability to translate Java code into Python while 
 
 ## Installation
 
-To use this model, follow these steps:
+To use this model, follow these steps :
 
 ### Requirements
 - Python 3.7+
